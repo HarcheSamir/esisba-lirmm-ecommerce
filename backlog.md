@@ -1,6 +1,6 @@
 # Backlog et User Stories - Application E-commerce Mono-commerçant
 
-## Architecture Microservices
+## I-Architecture Microservices
 
 ```mermaid
 graph TB
@@ -146,7 +146,7 @@ L'application sera divisée en plusieurs microservices indépendants :
 11. Recommendation Service
 12. Review & Ratings Service
 
-## Epics et User Stories
+## II-Epics et User Stories
 
 ### Epic 1: Gestion des Utilisateurs et Authentification
 
@@ -1492,7 +1492,7 @@ sequenceDiagram
         - Rollback automatique en cas d'erreur
         - Tests automatisés
 
-## Priorités et Planification
+## III-Priorités et Planification
 
 ### MVP (Minimum Viable Product)
 
@@ -1518,7 +1518,7 @@ sequenceDiagram
 - Epic : SEO et Marketing
 - Epic 11: Infrastructure avancée
 
-## Architecture Technique
+## IV-Architecture Technique
 
 ## Frontend
 
