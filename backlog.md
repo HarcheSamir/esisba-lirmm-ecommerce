@@ -135,7 +135,6 @@ graph TB
 ## Frontend
 
 - **Web**: Application React pour navigateurs
-- **Mobile**: Application React Native pour iOS/Android
 
 ## Infrastructure
 
