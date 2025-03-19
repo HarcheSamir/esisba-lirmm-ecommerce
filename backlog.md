@@ -150,7 +150,6 @@ L'application sera divisée en plusieurs microservices indépendants :
 
 ### Epic 1: Gestion des Utilisateurs et Authentification
 
-### User Stories - Clients
 
 1. **En tant que** visiteur, **je veux** créer un compte client **afin de** pouvoir effectuer des achats et suivre mes commandes.
     - Critères d'acceptance:
@@ -180,15 +179,14 @@ L'application sera divisée en plusieurs microservices indépendants :
         - Détails complets de chaque commande
         - Filtrage par date/statut
 
-### User Stories - Administrateur
 
-1. **En tant qu**'administrateur, **je veux** gérer les comptes utilisateurs **afin de** maintenir la base clients.
+6. **En tant qu**'administrateur, **je veux** gérer les comptes utilisateurs **afin de** maintenir la base clients.
     - Critères d'acceptance:
         - Recherche de clients par critères
         - Consultation des détails clients
         - Désactivation/réactivation de comptes
         - Journal d'activité des utilisateurs
-2. **En tant qu**'administrateur, **je veux** configurer les rôles et permissions afin d'assurer une gestion sécurisée.
+7. **En tant qu**'administrateur, **je veux** configurer les rôles et permissions afin d'assurer une gestion sécurisée.
     - Critères d'acceptance:
         - Création/modification de rôles
         - Attribution de permissions spécifiques
@@ -1503,22 +1501,22 @@ sequenceDiagram
 - Epic 3: Gestion du Panier et Processus d'Achat
 - Epic 4: Gestion des Commandes et Livraisons
 - Epic 5: Inventaire et Stock
-- Epic 12: Infrastructure de base
+- Epic 11: Infrastructure de base
 
 ### Phase 2
 
 - Epic 6: Notification et Communication
 - Epic 7: Avis et Notation
 - Epic 9: Analytics et Reporting de base
-- Epic 11: Gestion Responsive
+- Epic 10: Gestion Responsive
 - Améliorations des fonctionnalités MVP
 
 ### Phase 3
 
 - Epic 8: Recherche avancée et Recommandations
 - Epic 9: Analytics avancés et Power BI
-- Epic 10: SEO et Marketing
-- Epic 12: Infrastructure avancée
+- Epic : SEO et Marketing
+- Epic 11: Infrastructure avancée
 
 ## Architecture Technique
 
