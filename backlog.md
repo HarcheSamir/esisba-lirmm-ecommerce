@@ -154,7 +154,7 @@ graph TB
 - **Analytics**: Collecte et analyse des données utilisateurs et comportements
 - **Notification**: Envoi d'emails, SMS, notifications push
 - **Promotion**: Gestion des réductions, coupons, offres spéciales
-- **CMS**: Gestion du contenu du site (bannières, landing pages)
+- **CMS**: Gestion et personnalisation du contenu (textes, images, sections, landing pages ...)
 - **Recommendation**: Suggestions personnalisées aux utilisateurs (Machine Learning)
 - **Review**: Avis clients et système de notation
 
