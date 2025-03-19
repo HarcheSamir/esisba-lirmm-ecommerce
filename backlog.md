@@ -1,5 +1,9 @@
 # Backlog et User Stories - Application E-commerce Mono-commerçant
 
+
+&nbsp;  
+&nbsp; 
+
 # I-Architecture Microservices
 
 ```mermaid
@@ -162,6 +166,14 @@ graph TB
 
 - PostgreSQL dédiée par service pour isolation et scalabilité
 - Data Warehouse analytique avec visualisation Power BI
+
+
+
+  &nbsp;  
+&nbsp; 
+---
+&nbsp;  
+&nbsp; 
 
 # II-Epics et User Stories
 
@@ -1508,6 +1520,13 @@ sequenceDiagram
         - Pipeline CI/CD automatisé
         - Rollback automatique en cas d'erreur
         - Tests automatisés
+
+
+   &nbsp;  
+&nbsp; 
+---
+&nbsp;  
+&nbsp; 
 
 # III-Priorités et Planification
 
