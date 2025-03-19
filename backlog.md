@@ -131,20 +131,38 @@ graph TB
 
 ```
 
-L'application sera divisée en plusieurs microservices indépendants :
 
-1. Auth/User Service
-2. Product Service
-3. Order Service
-4. Payment Service
-5. Inventory Service
-6. Search Service
-7. Analytics Service
-8. Notification Service
-9. Promotion Service
-10. CMS Service (Content Managment Service)
-11. Recommendation Service
-12. Review & Ratings Service
+## Frontend
+
+- **Web**: Application React pour navigateurs
+- **Mobile**: Application React Native pour iOS/Android
+
+## Infrastructure
+
+- **API Gateway**: Point d'entrée centralisé (Express.js) avec équilibrage de charge (NGINX)
+- **Cache**: Cluster Redis pour optimiser les performances
+- **Message Broker**: Kafka/ZooKeeper pour communication asynchrone entre services
+- **DevOps**: CI/CD avec Jenkins, orchestration Kubernetes, monitoring Prometheus/Grafana
+
+## Microservices
+
+- **Auth/User**: Gestion des utilisateurs, authentification, autorisations
+- **Product**: Catalogue produits, détails, médias, catégories
+- **Order**: Création et gestion des commandes
+- **Payment**: Traitement des paiements et transactions
+- **Inventory**: Gestion des stocks et disponibilité
+- **Search**: Moteur de recherche produits (Elasticsearch)
+- **Analytics**: Collecte et analyse des données utilisateurs et comportements
+- **Notification**: Envoi d'emails, SMS, notifications push
+- **Promotion**: Gestion des réductions, coupons, offres spéciales
+- **CMS**: Gestion du contenu du site (bannières, landing pages)
+- **Recommendation**: Suggestions personnalisées aux utilisateurs (Machine Learning)
+- **Review**: Avis clients et système de notation
+
+## Bases de données
+
+- PostgreSQL dédiée par service pour isolation et scalabilité
+- Data Warehouse analytique avec visualisation Power BI
 
 ## II-Epics et User Stories
 
@@ -1518,36 +1536,3 @@ sequenceDiagram
 - Epic : SEO et Marketing
 - Epic 11: Infrastructure avancée
 
-## IV-Architecture Technique
-
-## Frontend
-
-- **Web**: Application React pour navigateurs
-- **Mobile**: Application React Native pour iOS/Android
-
-## Infrastructure
-
-- **API Gateway**: Point d'entrée centralisé (Express.js) avec équilibrage de charge (NGINX)
-- **Cache**: Cluster Redis pour optimiser les performances
-- **Message Broker**: Kafka/ZooKeeper pour communication asynchrone entre services
-- **DevOps**: CI/CD avec Jenkins, orchestration Kubernetes, monitoring Prometheus/Grafana
-
-## Microservices
-
-- **Auth/User**: Gestion des utilisateurs, authentification, autorisations
-- **Product**: Catalogue produits, détails, médias, catégories
-- **Order**: Création et gestion des commandes
-- **Payment**: Traitement des paiements et transactions
-- **Inventory**: Gestion des stocks et disponibilité
-- **Search**: Moteur de recherche produits (Elasticsearch)
-- **Analytics**: Collecte et analyse des données utilisateurs et comportements
-- **Notification**: Envoi d'emails, SMS, notifications push
-- **Promotion**: Gestion des réductions, coupons, offres spéciales
-- **CMS**: Gestion du contenu du site (bannières, landing pages)
-- **Recommendation**: Suggestions personnalisées aux utilisateurs (Machine Learning)
-- **Review**: Avis clients et système de notation
-
-## Bases de données
-
-- PostgreSQL dédiée par service pour isolation et scalabilité
-- Data Warehouse analytique avec visualisation Power BI
