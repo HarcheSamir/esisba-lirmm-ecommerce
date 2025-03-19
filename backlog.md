@@ -147,9 +147,10 @@ L'application sera divisée en plusieurs microservices indépendants :
 12. Review & Ratings Service
 
 ## Epics et User Stories
-<details>
-  <summary>Epic 1: Gestion des Utilisateurs et Authentification</summary>
 
+### Epic 1: Gestion des Utilisateurs et Authentification
+
+### User Stories - Clients
 
 1. **En tant que** visiteur, **je veux** créer un compte client **afin de** pouvoir effectuer des achats et suivre mes commandes.
     - Critères d'acceptance:
@@ -179,6 +180,7 @@ L'application sera divisée en plusieurs microservices indépendants :
         - Détails complets de chaque commande
         - Filtrage par date/statut
 
+### User Stories - Administrateur
 
 1. **En tant qu**'administrateur, **je veux** gérer les comptes utilisateurs **afin de** maintenir la base clients.
     - Critères d'acceptance:
@@ -422,14 +424,7 @@ sequenceDiagram
 
 ```
 
-</details>
-
-
-
-
-
-<details>
-<summary><b>Epic 2: Gestion du Catalogue et des Produits</b></summary>
+### Epic 2: Gestion du Catalogue et des Produits
 
 1. **En tant qu**'administrateur, **je veux** créer et gérer des catégories de produits afin d'organiser mon catalogue.
     - Critères d'acceptance:
@@ -645,10 +640,8 @@ sequenceDiagram
     UI->>A: Affiche confirmation
 
 ```
-</details>
 
-<details>
-<summary><b>Epic 3: Gestion du Panier et Processus d'Achat</b></summary>
+### Epic 3: Gestion du Panier et Processus d'Achat
 
 1. **En tant que** client, **je veux** ajouter des produits à mon panier **afin de** préparer mon achat.
     - Critères d'acceptance:
@@ -903,10 +896,8 @@ sequenceDiagram
     UI->>C: Présente panier avec:
     Note over UI,C: - Liste des produits<br>- Prix unitaires et sous-totaux<br>- Remises appliquées<br>- Estimation livraison<br>- Total final
 ```
-</details>
 
-<details>
-<summary><b>Epic 4: Gestion des Commandes et Livraisons</b></summary>
+### Epic 4: Gestion des Commandes et Livraisons
 
 1. **En tant que** client, **je veux** suivre l'état de ma commande **afin de** connaître son avancement.
     - Critères d'acceptance:
@@ -1047,10 +1038,8 @@ sequenceDiagram
     OS->>API: Retourne PDF facture
     API->>UI: Affiche/télécharge facture
 ```
-</details>
 
-<details>
-<summary><b>Epic 5: Inventaire et Stock</b></summary>
+### Epic 5: Inventaire et Stock
 
 1. **En tant qu**'administrateur, **je veux** gérer le stock des produits afin d'éviter les ruptures.
     - Critères d'acceptance:
@@ -1289,10 +1278,8 @@ sequenceDiagram
     UI->>C: Présente panier avec:
     Note over UI,C: - Liste des produits<br>- Prix unitaires et sous-totaux<br>- Remises appliquées<br>- Estimation livraison<br>- Total final
 ```
-</details>
 
-<details>
-<summary><b>Epic 6: Notification et Communication</b></summary>
+### Epic 6: Notification et Communication
 
 1. **En tant que** client, **je veux** recevoir des notifications sur ma commande afin d'être informé de son évolution.
     - Critères d'acceptance:
@@ -1373,12 +1360,8 @@ sequenceDiagram
     C->>SN: consulterHistoriqueNotifications()
     SN-->>C: Retourner historique des notifications
 ```
-</details>
 
-
-
-<details>
-<summary><b>Epic 7: Avis et Notation</b></summary>
+### Epic 7: Avis et Notation
 
 1. **En tant que** client, **je veux** laisser un avis sur un produit acheté **afin de** partager mon expérience.
     - Critères d'acceptance:
@@ -1469,10 +1452,8 @@ sequenceDiagram
         end
     end
 ```
-</details>
 
-<details>
-<summary><b>Epic 8: Recherche et Recommandations</b></summary>
+### Epic 8: Recherche et Recommandations
 
 1. **En tant que** client, **je veux** recevoir des recommandations personnalisées **afin de** découvrir des produits pertinents.
     - Critères d'acceptance:
@@ -1480,10 +1461,8 @@ sequenceDiagram
         - Produits complémentaires
         - "Les clients ont aussi acheté..."
         - Personnalisation progressive
-</details>
 
-<details>
-<summary><b>Epic 9: Analytics et Reporting</b></summary>
+### Epic 9: Analytics et Reporting
 
 1. **En tant qu'**administrateur, **je veux** exploiter les données via Power BI **afin de** créer des analyses avancées.
     - Critères d'acceptance:
@@ -1491,11 +1470,8 @@ sequenceDiagram
         - Modèles de données optimisés
         - Tableaux de bord interactifs
         - Rapports automatisés
-</details>
 
-
-<details>
-<summary><b>Epic 10: Gestion multi-appareils et Responsive</b></summary>
+### Epic 10: Gestion multi-appareils et Responsive
 
 1. **En tant que** client, **je veux** utiliser la plateforme sur tous mes appareils **afin de** profiter d'une expérience cohérente.
     - Critères d'acceptance:
@@ -1503,10 +1479,8 @@ sequenceDiagram
         - Adaptabilité des fonctionnalités
         - Performance optimisée sur mobile
         - Synchronisation du panier entre appareils
-</details>
 
-<details>
-<summary><b>Epic 11: Infrastructure et Performances</b></summary>
+### Epic 11: Infrastructure et Performances
 
 1. **En tant qu'**administrateur système, **je veux** surveiller les performances de l'application afin d'assurer une expérience utilisateur optimale.
     - Critères d'acceptance:
@@ -1519,8 +1493,6 @@ sequenceDiagram
         - Pipeline CI/CD automatisé
         - Rollback automatique en cas d'erreur
         - Tests automatisés
-</details>
-
 
 ## Priorités et Planification
 
@@ -1531,22 +1503,22 @@ sequenceDiagram
 - Epic 3: Gestion du Panier et Processus d'Achat
 - Epic 4: Gestion des Commandes et Livraisons
 - Epic 5: Inventaire et Stock
-- Epic 11: Infrastructure de base
+- Epic 12: Infrastructure de base
 
 ### Phase 2
 
 - Epic 6: Notification et Communication
 - Epic 7: Avis et Notation
 - Epic 9: Analytics et Reporting de base
-- Epic 10: Gestion Responsive
+- Epic 11: Gestion Responsive
 - Améliorations des fonctionnalités MVP
 
 ### Phase 3
 
 - Epic 8: Recherche avancée et Recommandations
 - Epic 9: Analytics avancés et Power BI
-- Epic : SEO et Marketing
-- Epic 11: Infrastructure avancée
+- Epic 10: SEO et Marketing
+- Epic 12: Infrastructure avancée
 
 ## Architecture Technique
 
