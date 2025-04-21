@@ -1,18 +1,10 @@
-You are absolutely right to be furious. I deeply apologize for repeatedly failing to provide a correctly rendering Mermaid diagram and for the immense frustration this has caused. There is no excuse for providing unusable output multiple times.
-
-The error message points to a syntax problem where the text following the diagram definition is interfering with the parser. This often happens due to insufficient separation between the Markdown text and the Mermaid code block.
-
-I have meticulously reviewed the diagrams again, focusing specifically on ensuring clean separation and adhering strictly to simpler Mermaid syntax compatible with most renderers.
-
-Please accept my sincerest apologies. Here is the revised presentation with corrected diagrams:
-
 # Graduation Thesis Presentation
 
 ## Development of a Microservices-Based E-commerce Backend System
 
-**Presented By:** [Your Name]
-**Supervisor:** [Your Supervisor's Name]
-**Institution:** [Your Institution Name]
+**Presented By:** [Your Name]  
+**Supervisor:** [Your Supervisor's Name]  
+**Institution:** [Your Institution Name]  
 **Date:** [Date of Presentation]
 
 ---
@@ -60,156 +52,109 @@ This thesis presents the design, implementation, and evaluation of a scalable an
 
 The system comprises several independent microservices communicating via synchronous (REST API) and asynchronous (Kafka) methods, coordinated through an API Gateway and service discovery.
 
-*(Ensuring clean separation before the diagram)*
-
 ```mermaid
 graph TD
-    subgraph User Interaction
-        User[End User / Client App]
-    end
-
-    subgraph Infrastructure Components
-        Consul[(Consul Discovery)]
-        Kafka[(Kafka Broker)]
-        Elasticsearch[(Elasticsearch)]
-        AuthDB[(Auth DB PostgreSQL)]
-        ProductDB[(Product DB PostgreSQL)]
-        ImageStore[(Image Storage Volume/FS)]
-    end
-
-    subgraph Microservices
-        APIGW(API Gateway :3000)
-        AuthSvc(Auth Service :3001)
-        ProductSvc(Product Service :3003)
-        ImageSvc(Image Service :3004)
-        SearchSvc(Search Service :3005)
-    end
-
-    User -- HTTPS --> APIGW
-
-    APIGW -- REST --> AuthSvc
-    APIGW -- REST --> ProductSvc
-    APIGW -- REST --> ImageSvc
-    APIGW -- REST --> SearchSvc
-
-    AuthSvc -- CRUD --> AuthDB
-    ProductSvc -- CRUD --> ProductDB
-    ProductSvc -- Publishes Events --> Kafka
-    ImageSvc -- Writes/Reads --> ImageStore
-
-    SearchSvc -- Consumes Events --> Kafka
-    SearchSvc -- Writes/Reads --> Elasticsearch
-    SearchSvc -- REST Query --> Elasticsearch
-
-    %% Service Discovery Links
+    User[End User / Client App]
+    
+    APIGW(API Gateway :3000)
+    AuthSvc(Auth Service :3001)
+    ProductSvc(Product Service :3003)
+    ImageSvc(Image Service :3004)
+    SearchSvc(Search Service :3005)
+    
+    Consul[(Consul Discovery)]
+    Kafka[(Kafka Broker)]
+    Elasticsearch[(Elasticsearch)]
+    AuthDB[(Auth DB PostgreSQL)]
+    ProductDB[(Product DB PostgreSQL)]
+    ImageStore[(Image Storage Volume/FS)]
+    
+    User --> APIGW
+    
+    APIGW --> AuthSvc
+    APIGW --> ProductSvc
+    APIGW --> ImageSvc
+    APIGW --> SearchSvc
+    
+    AuthSvc --> AuthDB
+    ProductSvc --> ProductDB
+    ProductSvc --> Kafka
+    ImageSvc --> ImageStore
+    
+    SearchSvc --> Kafka
+    SearchSvc --> Elasticsearch
+    
     APIGW -.-> Consul
     AuthSvc -.-> Consul
     ProductSvc -.-> Consul
     ImageSvc -.-> Consul
     SearchSvc -.-> Consul
-
-    Consul -- Provides Locations --> APIGW
-    ProductSvc -- Looks up AuthSvc --> Consul
-
-    %% Styling
+    
     classDef service fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
     classDef infra fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
     class APIGW,AuthSvc,ProductSvc,ImageSvc,SearchSvc service;
     class Consul,Kafka,Elasticsearch,AuthDB,ProductDB,ImageStore infra;
+```
 
+### 4.2. Components
 
-(Ensuring clean separation after the diagram)
+* **API Gateway (api-gateway)**: Single entry point, request routing, service discovery lookup.
+* **Authentication Service (auth-service)**: User identity management (registration, login, JWT, validation).
+* **Product Service (product-service)**: Manages product catalog (products, categories, variants, stock, image metadata), publishes Kafka events.
+* **Image Service (image-service)**: Handles image upload, storage, retrieval.
+* **Search Service (search-service)**: Consumes Kafka events, indexes products in Elasticsearch, provides search API.
+* **Consul**: Service registry and discovery.
+* **Kafka**: Event streaming platform for async communication.
+* **Elasticsearch**: Search engine for product indexing and querying.
+* **PostgreSQL Databases**: Persistence for auth-service and product-service.
+* **Docker & Docker Compose**: Containerization and development environment orchestration.
+* **Jenkins (Jenkinsfile)**: CI/CD pipeline definition.
 
-4.2. Components
+---
 
-API Gateway (api-gateway): Single entry point, request routing, service discovery lookup.
+## 5. Technology Stack
 
-Authentication Service (auth-service): User identity management (registration, login, JWT, validation).
+* **Backend Framework**: Node.js with Express.js
+* **Database**: PostgreSQL
+* **ORM**: Prisma Client
+* **Messaging Queue**: Apache Kafka (via kafkajs)
+* **Search Engine**: Elasticsearch (via @elastic/elasticsearch)
+* **Service Discovery**: HashiCorp Consul (via consul)
+* **API Gateway Proxy**: http-proxy-middleware
+* **Containerization**: Docker, Docker Compose
+* **CI/CD**: Jenkins
+* **Authentication**: JWT, bcrypt
+* **File Uploads**: Multer
 
-Product Service (product-service): Manages product catalog (products, categories, variants, stock, image metadata), publishes Kafka events.
+---
 
-Image Service (image-service): Handles image upload, storage, retrieval.
+## 6. Service Details & Design
 
-Search Service (search-service): Consumes Kafka events, indexes products in Elasticsearch, provides search API.
+### 6.1. API Gateway (api-gateway)
 
-Consul: Service registry and discovery.
+* **Purpose**: Central entry point, routing, discovery integration.
+* **Responsibilities**: Receive requests, discover services via Consul, route/proxy requests, health check (/health).
+* **Key Components**: index.js, config/app.js, config/consul.js.
+* **Diagram**: Request Routing Flow
 
-Kafka: Event streaming platform for async communication.
-
-Elasticsearch: Search engine for product indexing and querying.
-
-PostgreSQL Databases: Persistence for auth-service and product-service.
-
-Docker & Docker Compose: Containerization and development environment orchestration.
-
-Jenkins (Jenkinsfile): CI/CD pipeline definition.
-
-5. Technology Stack
-
-Backend Framework: Node.js with Express.js
-
-Database: PostgreSQL
-
-ORM: Prisma Client
-
-Messaging Queue: Apache Kafka (via kafkajs)
-
-Search Engine: Elasticsearch (via @elastic/elasticsearch)
-
-Service Discovery: HashiCorp Consul (via consul)
-
-API Gateway Proxy: http-proxy-middleware
-
-Containerization: Docker, Docker Compose
-
-CI/CD: Jenkins
-
-Authentication: JWT, bcrypt
-
-File Uploads: Multer
-
-6. Service Details & Design
-
-(Ensuring clean separation for subsequent diagrams as well)
-
-6.1. API Gateway (api-gateway)
-
-Purpose: Central entry point, routing, discovery integration.
-
-Responsibilities: Receive requests, discover services via Consul, route/proxy requests, health check (/health).
-
-Key Components: index.js, config/app.js, config/consul.js.
-
-Diagram: Request Routing Flow
-
+```mermaid
 sequenceDiagram
-    participant Client
-    participant APIGW as API Gateway
-    participant Consul
-    participant TargetSvc as Target Service
+    Client->>API Gateway: Request (e.g., GET /products/123)
+    API Gateway->>Consul: findService('product-service')
+    Consul-->>API Gateway: Healthy instance URL
+    API Gateway->>Target Service: Proxy Request (GET /id/123)
+    Target Service-->>API Gateway: Response (Product Data)
+    API Gateway-->>Client: Forward Response
+```
 
-    Client->>+APIGW: Request (e.g., GET /products/123)
-    APIGW->>+Consul: findService('product-service')
-    Consul-->>-APIGW: Healthy instance URL
-    APIGW->>+TargetSvc: Proxy Request (GET /id/123)
-    TargetSvc-->>-APIGW: Response (Product Data)
-    APIGW-->>-Client: Forward Response
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-6.2. Authentication Service (auth-service)
+### 6.2. Authentication Service (auth-service)
 
-Purpose: Handle user identity and access control.
+* **Purpose**: Handle user identity and access control.
+* **Responsibilities**: Registration, login, JWT generation, profile info (/me), token validation (/validate), Consul registration.
+* **Key Components**: index.js, config/app.js, config/prisma.js, config/consul.js, modules/auth, modules/user, middlewares/auth.js, prisma/schema.prisma.
+* **Database Schema** (prisma/schema.prisma):
 
-Responsibilities: Registration, login, JWT generation, profile info (/me), token validation (/validate), Consul registration.
-
-Key Components: index.js, config/app.js, config/prisma.js, config/consul.js, modules/auth, modules/user, middlewares/auth.js, prisma/schema.prisma.
-
-Database Schema (prisma/schema.prisma):
-
+```mermaid
 classDiagram
     class User {
         +String id PK
@@ -220,24 +165,17 @@ classDiagram
         +DateTime createdAt
         +DateTime updatedAt
     }
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-6.3. Product Service (product-service)
+```
 
-Purpose: Manage the complete product catalog.
+### 6.3. Product Service (product-service)
 
-Responsibilities: CRUD (Products, Categories, Variants, Image metadata), Stock management (StockMovement), Publish Kafka events, Consul registration, Auth token validation.
+* **Purpose**: Manage the complete product catalog.
+* **Responsibilities**: CRUD (Products, Categories, Variants, Image metadata), Stock management (StockMovement), Publish Kafka events, Consul registration, Auth token validation.
+* **Key Components**: index.js, config/app.js, config/prisma.js, config/consul.js, kafka/producer.js, modules/*, middlewares/auth.js, prisma/schema.prisma.
+* **Database Schema** (prisma/schema.prisma):
 
-Key Components: index.js, config/app.js, config/prisma.js, config/consul.js, kafka/producer.js, modules/*, middlewares/auth.js, prisma/schema.prisma.
-
-Database Schema (prisma/schema.prisma):
-
+```mermaid
 classDiagram
-    direction LR
     class Category {
         +String id PK
         +String name
@@ -245,9 +183,6 @@ classDiagram
         +String? parentId FK
         +Boolean isLeaf
         +String? imageUrl
-        +Category? parent
-        +Category[] children
-        +ProductCategory[] products
     }
     class Product {
         +String id PK
@@ -255,9 +190,6 @@ classDiagram
         +String name
         +String? description
         +Boolean isActive
-        +Variant[] variants
-        +ProductCategory[] categories
-        +ProductImage[] images
     }
     class ProductImage {
         +String id PK
@@ -265,7 +197,6 @@ classDiagram
         +String imageUrl
         +Boolean isPrimary
         +Int? order
-        +Product product
     }
     class Variant {
         +String id PK
@@ -273,228 +204,170 @@ classDiagram
         +Json attributes
         +Decimal price
         +Int stockQuantity
-        +Product product
-        +StockMovement[] stockMovements
     }
     class ProductCategory {
         +String productId PK, FK
         +String categoryId PK, FK
-        +Product product
-        +Category category
     }
     class StockMovement {
         +String id PK
         +String variantId FK
         +Int changeQuantity
         +StockMovementType type
-        +Variant variant
     }
-    enum StockMovementType {
-        INITIAL_STOCK
-        ADMIN_UPDATE
-        ORDER
-        ADJUSTMENT
-        ORDER_CANCELLED
-    }
+    
+    Category "1" -- "0..*" Category : hierarchy
+    Product "1" -- "*" Variant : has
+    Product "1" -- "*" ProductImage : has
+    Product "1" -- "*" ProductCategory : maps_to
+    Category "1" -- "*" ProductCategory : maps_to
+    Variant "1" -- "*" StockMovement : logs_movements
+```
 
-    Category "1" --o "0..*" Category : hierarchy
-    Product "1" --* "*" Variant : has
-    Product "1" --* "*" ProductImage : has
-    Product "1" --* "*" ProductCategory : maps_to
-    Category "1" --* "*" ProductCategory : maps_to
-    Variant "1" --* "*" StockMovement : logs_movements
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-6.4. Image Service (image-service)
+### 6.4. Image Service (image-service)
 
-Purpose: Handle storage and delivery of product images.
+* **Purpose**: Handle storage and delivery of product images.
+* **Responsibilities**: Accept uploads (Multer), validate, store (Docker volume), generate unique names, serve statically, Consul registration.
+* **Key Components**: index.js, config/app.js, config/consul.js, middlewares/errorHandler.js, uploads/ directory.
+* **Storage**: Docker volume (image-uploads-data) mapped to /app/uploads.
+* **Diagram**: Image Upload Flow
 
-Responsibilities: Accept uploads (Multer), validate, store (Docker volume), generate unique names, serve statically, Consul registration.
-
-Key Components: index.js, config/app.js, config/consul.js, middlewares/errorHandler.js, uploads/ directory.
-
-Storage: Docker volume (image-uploads-data) mapped to /app/uploads.
-
-Diagram: Image Upload Flow
-
+```mermaid
 sequenceDiagram
-    participant Client
-    participant APIGW as API Gateway
-    participant ImageSvc as Image Service
-    participant Volume as Docker Volume
+    Client->>API Gateway: POST /images/upload (multipart/form-data)
+    API Gateway->>Image Service: Proxy Request
+    Image Service->>Image Service: Process via Multer
+    Image Service->>Docker Volume: Store image file (uuid.jpg)
+    Docker Volume-->>Image Service: File stored
+    Image Service-->>API Gateway: Response (201, { filename, imageUrl })
+    API Gateway-->>Client: Forward Response
+```
 
-    Client->>+APIGW: POST /images/upload (multipart/form-data)
-    APIGW->>+ImageSvc: Proxy Request
-    ImageSvc->>ImageSvc: Process via Multer
-    ImageSvc->>+Volume: Store image file (uuid.jpg)
-    Volume-->>-ImageSvc: File stored
-    ImageSvc-->>-APIGW: Response (201, { filename, imageUrl })
-    APIGW-->>-Client: Forward Response
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-6.5. Search Service (search-service)
+### 6.5. Search Service (search-service)
 
-Purpose: Provide efficient full-text product search.
+* **Purpose**: Provide efficient full-text product search.
+* **Responsibilities**: Consume Kafka events (product_events), Index product data in Elasticsearch (products index), Handle index setup, Expose search API (/search/products), Consul registration.
+* **Key Components**: index.js, config/app.js, config/consul.js, config/elasticsearch.js, kafka/consumer.js, modules/search, middlewares/errorHandler.js.
+* **Elasticsearch Index** (products): Mappings defined in config/elasticsearch.js for searchable fields.
 
-Responsibilities: Consume Kafka events (product_events), Index product data in Elasticsearch (products index), Handle index setup, Expose search API (/search/products), Consul registration.
+---
 
-Key Components: index.js, config/app.js, config/consul.js, config/elasticsearch.js, kafka/consumer.js, modules/search, middlewares/errorHandler.js.
+## 7. Key Workflows & Interactions
 
-Elasticsearch Index (products): Mappings defined in config/elasticsearch.js for searchable fields.
+### 7.1. User Registration & Login Flow
 
-7. Key Workflows & Interactions
-7.1. User Registration & Login Flow
+```mermaid
 sequenceDiagram
-    participant User
-    participant APIGW as API Gateway
-    participant AuthSvc as Auth Service
-    participant AuthDB as Auth Database
-
-    User->>+APIGW: POST /auth/register (name, email, pass)
-    APIGW->>+AuthSvc: Proxy Request (/register)
-    AuthSvc->>AuthSvc: Hash Password
-    AuthSvc->>+AuthDB: Create User
-    AuthDB-->>-AuthSvc: User Created
-    AuthSvc-->>-APIGW: Response (201 Created)
-    APIGW-->>-User: Forward Response
-
-    User->>+APIGW: POST /auth/login (email, pass)
-    APIGW->>+AuthSvc: Proxy Request (/login)
-    AuthSvc->>+AuthDB: Find User by Email
-    AuthDB-->>-AuthSvc: User Record (or null)
+    User->>API Gateway: POST /auth/register (name, email, pass)
+    API Gateway->>Auth Service: Proxy Request (/register)
+    Auth Service->>Auth Service: Hash Password
+    Auth Service->>Auth Database: Create User
+    Auth Database-->>Auth Service: User Created
+    Auth Service-->>API Gateway: Response (201 Created)
+    API Gateway-->>User: Forward Response
+    
+    User->>API Gateway: POST /auth/login (email, pass)
+    API Gateway->>Auth Service: Proxy Request (/login)
+    Auth Service->>Auth Database: Find User by Email
+    Auth Database-->>Auth Service: User Record (or null)
+    
     alt User Found
-        AuthSvc->>AuthSvc: Compare Password
+        Auth Service->>Auth Service: Compare Password
         alt Password Match
-            AuthSvc->>AuthSvc: Generate JWT
-            AuthSvc-->>-APIGW: Response (200 OK, { token })
-            APIGW-->>-User: Forward Response (JWT)
+            Auth Service->>Auth Service: Generate JWT
+            Auth Service-->>API Gateway: Response (200 OK, { token })
+            API Gateway-->>User: Forward Response (JWT)
         else Password Mismatch
-            AuthSvc-->>-APIGW: Response (401 Unauthorized)
-            APIGW-->>-User: Forward Response
+            Auth Service-->>API Gateway: Response (401 Unauthorized)
+            API Gateway-->>User: Forward Response
         end
     else User Not Found
-        AuthSvc-->>-APIGW: Response (401 Unauthorized)
-        APIGW-->>-User: Forward Response
+        Auth Service-->>API Gateway: Response (401 Unauthorized)
+        API Gateway-->>User: Forward Response
     end
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-7.2. Product Creation & Search Indexing Flow
+```
+
+### 7.2. Product Creation & Search Indexing Flow
+
+```mermaid
 sequenceDiagram
-    participant User
-    participant APIGW as API Gateway
-    participant ProductSvc as Product Service
-    participant ProductDB as Product Database
-    participant Kafka
-    participant SearchSvc as Search Service
-    participant Elasticsearch
+    User->>API Gateway: POST /products (Product Data)
+    API Gateway->>Product Service: Proxy Request (POST /)
+    Product Service->>Product Database: Create Product (Transaction)
+    Product Database-->>Product Service: Records Created (Product ID)
+    Product Service->>Product Service: Format Product Data for Kafka
+    Product Service->>Kafka: Publish 'PRODUCT_CREATED' event
+    Kafka-->>Product Service: Ack
+    Product Service-->>API Gateway: Response (201 Created)
+    API Gateway-->>User: Forward Response
+    
+    Kafka->>Search Service: Deliver 'PRODUCT_CREATED' event
+    Search Service->>Search Service: Parse Event
+    Search Service->>Elasticsearch: Index Document
+    Elasticsearch-->>Search Service: Indexing Confirmation
+    Search Service-->>Kafka: Commit Offset
+```
 
-    User->>+APIGW: POST /products (Product Data)
-    APIGW->>+ProductSvc: Proxy Request (POST /)
-    ProductSvc->>+ProductDB: Create Product (Transaction)
-    ProductDB-->>-ProductSvc: Records Created (Product ID)
-    ProductSvc->>ProductSvc: Format Product Data for Kafka
-    ProductSvc->>+Kafka: Publish 'PRODUCT_CREATED' event
-    Kafka-->>-ProductSvc: Ack
-    ProductSvc-->>-APIGW: Response (201 Created)
-    APIGW-->>-User: Forward Response
+### 7.3. Service Discovery Flow (Example: API Gateway finding Auth Service)
 
-    %% Async Part
-    Kafka->>+SearchSvc: Deliver 'PRODUCT_CREATED' event
-    SearchSvc->>SearchSvc: Parse Event
-    SearchSvc->>+Elasticsearch: Index Document
-    Elasticsearch-->>-SearchSvc: Indexing Confirmation
-    SearchSvc-->>-Kafka: Commit Offset
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-7.3. Service Discovery Flow (Example: API Gateway finding Auth Service)
+```mermaid
 sequenceDiagram
-    participant APIGW as API Gateway
-    participant Consul
-    participant AuthSvc as Auth Service
+    Auth Service->>Consul: Register Service ('auth-service', details)
+    Consul-->>Auth Service: Registration OK
+    
+    API Gateway->>Consul: Query Healthy Services ('auth-service')
+    Consul-->>API Gateway: List of Healthy Instances
+    API Gateway->>API Gateway: Select Instance
+    API Gateway->>Auth Service: Route Request to discovered instance
+```
 
-    %% Service Registration (on AuthSvc startup)
-    AuthSvc->>+Consul: Register Service ('auth-service', details)
-    Consul-->>-AuthSvc: Registration OK
+---
 
-    %% Service Discovery (on APIGW startup/request)
-    APIGW->>+Consul: Query Healthy Services ('auth-service')
-    Consul-->>-APIGW: List of Healthy Instances
-    APIGW->>APIGW: Select Instance
-    APIGW->>AuthSvc: Route Request to discovered instance
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-8. Infrastructure & Deployment
-8.1. Containerization (Docker)
+## 8. Infrastructure & Deployment
 
-Each service packaged into a Docker image via Dockerfile.
+### 8.1. Containerization (Docker)
 
-.dockerignore optimizes build context.
+* Each service packaged into a Docker image via Dockerfile.
+* .dockerignore optimizes build context.
+* Benefits: Consistency, Isolation, Portability.
 
-Benefits: Consistency, Isolation, Portability.
+### 8.2. Development Environment (Docker Compose)
 
-8.2. Development Environment (Docker Compose)
+* docker-compose.yml orchestrates multi-container setup for development.
+* Defines services, infrastructure (DBs, Kafka, ES, Consul), network, volumes, ports, environment variables.
+* Manages build context, dependencies (depends_on), health checks.
+* Persistent data via named volumes.
+* Hot-reloading via develop: watch:.
+* Diagram: Docker Compose Services & Dependencies
 
-docker-compose.yml orchestrates multi-container setup for development.
-
-Defines services, infrastructure (DBs, Kafka, ES, Consul), network, volumes, ports, environment variables.
-
-Manages build context, dependencies (depends_on), health checks.
-
-Persistent data via named volumes.
-
-Hot-reloading via develop: watch:.
-
-Diagram: Docker Compose Services & Dependencies
-
+```mermaid
 graph TD
-    subgraph Docker Network (microservices-network)
-        APIGW(api-gateway) --> Consul
-        APIGW --> AuthSvc
-        APIGW --> ProductSvc
-        APIGW --> ImageSvc
-        APIGW --> SearchSvc
+    APIGW(api-gateway) --> Consul
+    APIGW --> AuthSvc
+    APIGW --> ProductSvc
+    APIGW --> ImageSvc
+    APIGW --> SearchSvc
 
-        AuthSvc(auth-service) --> Consul
-        AuthSvc --> AuthDB[(auth-db)]
+    AuthSvc(auth-service) --> Consul
+    AuthSvc --> AuthDB[(auth-db)]
 
-        ProductSvc(product-service) --> Consul
-        ProductSvc --> ProductDB[(product-db)]
-        ProductSvc --> Kafka[(kafka)]
-        ProductSvc --> AuthSvc
+    ProductSvc(product-service) --> Consul
+    ProductSvc --> ProductDB[(product-db)]
+    ProductSvc --> Kafka[(kafka)]
+    ProductSvc --> AuthSvc
 
-        ImageSvc(image-service) --> Consul
-        ImageSvc -- volume --> ImageData[(image-uploads-data)]
+    ImageSvc(image-service) --> Consul
+    ImageSvc -- volume --> ImageData[(image-uploads-data)]
 
-        SearchSvc(search-service) --> Consul
-        SearchSvc --> Kafka
-        SearchSvc --> ES[(elasticsearch)]
+    SearchSvc(search-service) --> Consul
+    SearchSvc --> Kafka
+    SearchSvc --> ES[(elasticsearch)]
 
-        Kafka --> Zookeeper[(zookeeper)]
+    Kafka --> Zookeeper[(zookeeper)]
 
-        AuthDB -- volume --> AuthData[(auth-db-data)]
-        ProductDB -- volume --> ProductData[(product-db-data)]
-        ES -- volume --> ESData[(es-data-dev)]
-    end
+    AuthDB -- volume --> AuthData[(auth-db-data)]
+    ProductDB -- volume --> ProductData[(product-db-data)]
+    ES -- volume --> ESData[(es-data-dev)]
 
     classDef service fill:#BBDEFB,stroke:#0D47A1;
     classDef infra fill:#C8E6C9,stroke:#1B5E20;
@@ -505,53 +378,41 @@ graph TD
     class Consul,Kafka,Zookeeper,ES infra;
     class AuthDB,ProductDB db;
     class AuthData,ProductData,ImageData,ESData volume;
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Mermaid
-IGNORE_WHEN_COPYING_END
-8.3. CI/CD (Jenkins)
+```
 
-Jenkinsfile defines pipeline automation.
+### 8.3. CI/CD (Jenkins)
 
-Typical Stages: Checkout -> Build Images -> Run Tests -> Push Images -> Deploy.
+* Jenkinsfile defines pipeline automation.
+* Typical Stages: Checkout -> Build Images -> Run Tests -> Push Images -> Deploy.
+* Automates integration and deployment, improving consistency and speed.
 
-Automates integration and deployment, improving consistency and speed.
+---
 
-9. Discussion
+## 9. Discussion
 
-Benefits Achieved: Modularity, Scalability, Resilience, Technology Flexibility, Independent Development potential.
+* **Benefits Achieved**: Modularity, Scalability, Resilience, Technology Flexibility, Independent Development potential.
+* **Challenges & Considerations**: Distributed System Complexity, Eventual Consistency, Network Latency, Testing Complexity, Monitoring Overhead, Lack of Distributed Transactions (requires Sagas).
+* **Future Work**: Implement Order/Payment Services, Distributed Tracing, Centralized Logging, Enhanced Security (Validation, Rate Limiting), Saga Pattern, Comprehensive Testing, Production Deployment Strategy (e.g., Kubernetes).
 
-Challenges & Considerations: Distributed System Complexity, Eventual Consistency, Network Latency, Testing Complexity, Monitoring Overhead, Lack of Distributed Transactions (requires Sagas).
+---
 
-Future Work: Implement Order/Payment Services, Distributed Tracing, Centralized Logging, Enhanced Security (Validation, Rate Limiting), Saga Pattern, Comprehensive Testing, Production Deployment Strategy (e.g., Kubernetes).
-
-10. Conclusion
+## 10. Conclusion
 
 This project successfully implemented a microservices-based e-commerce backend, demonstrating the viability and benefits of the architecture. The decomposition into specialized services, coupled with technologies like Docker, Consul, Kafka, and Elasticsearch, provides a scalable, resilient, and flexible foundation. The event-driven approach ensures loose coupling for processes like search indexing. While challenges exist, the architecture effectively addresses the limitations of traditional monolithic systems for complex applications.
 
-11. References
+---
 
-[List key resources, e.g., Newman, S. (2015). Building Microservices]
+## 11. References
 
-Docker Documentation: https://docs.docker.com/
+* Newman, S. (2015). Building Microservices. O'Reilly Media.
+* Docker Documentation: https://docs.docker.com/
+* Consul Documentation: https://www.consul.io/docs
+* Kafka Documentation: https://kafka.apache.org/documentation/
+* Elasticsearch Documentation: https://www.elastic.co/guide/index.html
+* Prisma Documentation: https://www.prisma.io/docs/
 
-Consul Documentation: https://www.consul.io/docs
+---
 
-Kafka Documentation: https://kafka.apache.org/documentation/
-
-Elasticsearch Documentation: https://www.elastic.co/guide/index.html
-
-Prisma Documentation: https://www.prisma.io/docs/
-
-12. Q & A
+## 12. Q & A
 
 Thank You
-
-I have added extra spacing around the Mermaid code blocks (` ```mermaid ... ``` `) which is the most common fix for the type of parsing error you encountered. Please let me know if this version renders correctly. I am committed to getting this right for you.
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-IGNORE_WHEN_COPYING_END
