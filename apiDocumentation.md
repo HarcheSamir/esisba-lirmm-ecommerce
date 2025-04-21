@@ -154,6 +154,7 @@ classDiagram
 ```mermaid
 classDiagram
     direction LR
+    
     class Category {
         +String id PK
         +String name
@@ -165,6 +166,7 @@ classDiagram
         +Category[] children
         +ProductCategory[] products
     }
+    
     class Product {
         +String id PK
         +String sku Unique
@@ -175,6 +177,7 @@ classDiagram
         +ProductCategory[] categories
         +ProductImage[] images
     }
+    
     class ProductImage {
         +String id PK
         +String productId FK
@@ -183,6 +186,7 @@ classDiagram
         +Int? order
         +Product product
     }
+    
     class Variant {
         +String id PK
         +String productId FK
@@ -192,12 +196,14 @@ classDiagram
         +Product product
         +StockMovement[] stockMovements
     }
+    
     class ProductCategory {
         +String productId PK, FK
         +String categoryId PK, FK
         +Product product
         +Category category
     }
+    
     class StockMovement {
         +String id PK
         +String variantId FK
@@ -205,6 +211,7 @@ classDiagram
         +StockMovementType type
         +Variant variant
     }
+    
     class StockMovementType {
         INITIAL_STOCK
         ADMIN_UPDATE
@@ -214,11 +221,11 @@ classDiagram
     }
 
     Category "1" --o "0..*" Category : hierarchy
-    Product "1" --* "*" Variant : has
-    Product "1" --* "*" ProductImage : has
-    Product "1" --* "*" ProductCategory : maps_to
-    Category "1" --* "*" ProductCategory : maps_to
-    Variant "1" --* "*" StockMovement : logs_movements
+    Product "1" --* "many" Variant : has
+    Product "1" --* "many" ProductImage : has
+    Product "1" --o "many" ProductCategory : maps_to
+    Category "1" --o "many" ProductCategory : maps_to
+    Variant "1" --o "many" StockMovement : logs_movements
 ```
 
 ### 4. Image Service (image-service)
