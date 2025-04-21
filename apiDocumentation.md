@@ -1,12 +1,6 @@
-
-
-## 1. Abstract
-
-This thesis presents the design, implementation, and evaluation of a scalable and resilient backend system for an e-commerce platform, architected using microservices principles. The system decomposes core e-commerce functionalities—authentication, product catalog management, image handling, and search—into independently deployable services. Key technologies employed include Node.js (Express.js), PostgreSQL with Prisma ORM, Apache Kafka for asynchronous event streaming, Elasticsearch for optimized product searching, Consul for service discovery, and Docker for containerization. The architecture emphasizes loose coupling, fault isolation, and technology diversity, enabling independent scaling and development cycles for each service. This presentation details the system architecture, technology stack, service interactions, data flow, deployment strategy, and discusses the achieved benefits and potential challenges of the microservices approach in this context.
-
 ---
 
-## 2. Introduction
+##  Introduction
 
 * **Problem Domain:** Traditional monolithic e-commerce backends often face challenges related to scalability, maintainability, fault tolerance, and technology lock-in as complexity grows.
 * **Proposed Solution:** A microservices architecture addresses these challenges by breaking down the application into smaller, independent, and specialized services.
@@ -21,7 +15,7 @@ This thesis presents the design, implementation, and evaluation of a scalable an
 
 ---
 
-## 3. Background & Related Work
+##  Background & Related Work
 
 * **Microservices Architecture:**
   * Definition: An architectural style structuring an application as a collection of small, autonomous services modeled around a business domain.
@@ -37,9 +31,9 @@ This thesis presents the design, implementation, and evaluation of a scalable an
 
 ---
 
-## 4. System Architecture
+##  System Architecture
 
-### 4.1. High-Level Overview
+### 1. High-Level Overview
 
 The system comprises several independent microservices communicating via synchronous (REST API) and asynchronous (Kafka) methods, coordinated through an API Gateway and service discovery.
 
@@ -86,7 +80,7 @@ graph TD
     ProductSvc -- Looks up AuthSvc --> Consul
 ```
 
-### 4.2. Components
+### 2. Components
 
 * **API Gateway (api-gateway)**: Single entry point, request routing, service discovery lookup.
 * **Authentication Service (auth-service)**: User identity management (registration, login, JWT, validation).
@@ -102,7 +96,7 @@ graph TD
 
 ---
 
-## 5. Technology Stack
+##  Technology Stack
 
 * **Backend Framework**: Node.js with Express.js
 * **Database**: PostgreSQL
@@ -118,9 +112,9 @@ graph TD
 
 ---
 
-## 6. Service Details & Design
+##  Service Details & Design
 
-### 6.1. API Gateway (api-gateway)
+### 1. API Gateway (api-gateway)
 
 * **Purpose**: Central entry point, routing, discovery integration.
 * **Responsibilities**: Receive requests, discover services via Consul, route/proxy requests, health check (/health).
@@ -143,7 +137,7 @@ sequenceDiagram
     APIGW-->>-Client: Forward Response
 ```
 
-### 6.2. Authentication Service (auth-service)
+### 2. Authentication Service (auth-service)
 
 * **Purpose**: Handle user identity and access control.
 * **Responsibilities**: Registration, login, JWT generation, profile info (/me), token validation (/validate), Consul registration.
@@ -226,7 +220,7 @@ classDiagram
         +StockMovementType type
         +Variant variant
     }
-    enum StockMovementType {
+    class StockMovementType {
         INITIAL_STOCK
         ADMIN_UPDATE
         ORDER
@@ -242,7 +236,7 @@ classDiagram
     Variant "1" --* "*" StockMovement : logs_movements
 ```
 
-### 6.4. Image Service (image-service)
+### 4. Image Service (image-service)
 
 * **Purpose**: Handle storage and delivery of product images.
 * **Responsibilities**: Accept uploads (Multer), validate, store (Docker volume), generate unique names, serve statically, Consul registration.
@@ -267,7 +261,7 @@ sequenceDiagram
     APIGW-->>-Client: Forward Response
 ```
 
-### 6.5. Search Service (search-service)
+### 5. Search Service (search-service)
 
 * **Purpose**: Provide efficient full-text product search.
 * **Responsibilities**: Consume Kafka events (product_events), Index product data in Elasticsearch (products index), Handle index setup, Expose search API (/search/products), Consul registration.
@@ -276,9 +270,9 @@ sequenceDiagram
 
 ---
 
-## 7. Key Workflows & Interactions
+##  Key Workflows & Interactions
 
-### 7.1. User Registration & Login Flow
+### 1. User Registration & Login Flow
 
 ```mermaid
 sequenceDiagram
@@ -315,7 +309,7 @@ sequenceDiagram
     end
 ```
 
-### 7.2. Product Creation & Search Indexing Flow
+### 2. Product Creation & Search Indexing Flow
 
 ```mermaid
 sequenceDiagram
@@ -344,7 +338,7 @@ sequenceDiagram
     SearchSvc-->>-Kafka: Commit Offset
 ```
 
-### 7.3. Service Discovery Flow (Example: API Gateway finding Auth Service)
+### 3. Service Discovery Flow (Example: API Gateway finding Auth Service)
 
 ```mermaid
 sequenceDiagram
@@ -363,15 +357,15 @@ sequenceDiagram
 
 ---
 
-## 8. Infrastructure & Deployment
+##  Infrastructure & Deployment
 
-### 8.1. Containerization (Docker)
+### 1. Containerization (Docker)
 
 * Each service packaged into a Docker image via Dockerfile.
 * .dockerignore optimizes build context.
 * Benefits: Consistency, Isolation, Portability.
 
-### 8.2. Development Environment (Docker Compose)
+### 2. Development Environment (Docker Compose)
 
 * docker-compose.yml orchestrates multi-container setup for development.
 * Defines services, infrastructure (DBs, Kafka, ES, Consul), network, volumes, ports, environment variables.
@@ -411,39 +405,10 @@ graph TD
     ES -- volume --> ESData[(es-data-dev)]
 ```
 
-### 8.3. CI/CD (Jenkins)
+### 3. CI/CD (Jenkins)
 
 * Jenkinsfile defines pipeline automation.
 * Typical Stages: Checkout -> Build Images -> Run Tests -> Push Images -> Deploy.
 * Automates integration and deployment, improving consistency and speed.
 
 ---
-
-## 9. Discussion
-
-* **Benefits Achieved**: Modularity, Scalability, Resilience, Technology Flexibility, Independent Development potential.
-* **Challenges & Considerations**: Distributed System Complexity, Eventual Consistency, Network Latency, Testing Complexity, Monitoring Overhead, Lack of Distributed Transactions (requires Sagas).
-* **Future Work**: Implement Order/Payment Services, Distributed Tracing, Centralized Logging, Enhanced Security (Validation, Rate Limiting), Saga Pattern, Comprehensive Testing, Production Deployment Strategy (e.g., Kubernetes).
-
----
-
-## 10. Conclusion
-
-This project successfully implemented a microservices-based e-commerce backend, demonstrating the viability and benefits of the architecture. The decomposition into specialized services, coupled with technologies like Docker, Consul, Kafka, and Elasticsearch, provides a scalable, resilient, and flexible foundation. The event-driven approach ensures loose coupling for processes like search indexing. While challenges exist, the architecture effectively addresses the limitations of traditional monolithic systems for complex applications.
-
----
-
-## 11. References
-
-* Newman, S. (2015). Building Microservices
-* Docker Documentation: https://docs.docker.com/
-* Consul Documentation: https://www.consul.io/docs
-* Kafka Documentation: https://kafka.apache.org/documentation/
-* Elasticsearch Documentation: https://www.elastic.co/guide/index.html
-* Prisma Documentation: https://www.prisma.io/docs/
-
----
-
-## 12. Q & A
-
-Thank You
