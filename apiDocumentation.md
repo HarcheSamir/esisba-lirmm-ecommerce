@@ -1,19 +1,4 @@
----
 
-##  Introduction
-
-* **Problem Domain:** Traditional monolithic e-commerce backends often face challenges related to scalability, maintainability, fault tolerance, and technology lock-in as complexity grows.
-* **Proposed Solution:** A microservices architecture addresses these challenges by breaking down the application into smaller, independent, and specialized services.
-* **Project Goals:**
-  * Design and implement a robust backend for a typical e-commerce platform.
-  * Leverage microservices principles for modularity and scalability.
-  * Implement core functionalities: Authentication, Product Catalog, Image Management, Search.
-  * Ensure service discovery and resilience.
-  * Utilize asynchronous communication for decoupling critical processes (e.g., search indexing).
-  * Containerize services for consistent deployment.
-* **Scope:** Focus on the backend infrastructure, core service implementation, inter-service communication, and deployment aspects. Frontend and advanced features (e.g., complex order management, payment gateways) are outside the primary scope.
-
----
 
 ##  Background & Related Work
 
@@ -297,16 +282,18 @@ sequenceDiagram
         AuthSvc->>AuthSvc: Compare Password
         alt Password Match
             AuthSvc->>AuthSvc: Generate JWT
-            AuthSvc-->>-APIGW: Response (200 OK, { token })
-            APIGW-->>-User: Forward Response (JWT)
+            AuthSvc-->>APIGW: Response (200 OK, { token })
+            APIGW-->>User: Forward Response (JWT)
         else Password Mismatch
-            AuthSvc-->>-APIGW: Response (401 Unauthorized)
-            APIGW-->>-User: Forward Response
+            AuthSvc-->>APIGW: Response (401 Unauthorized)
+            APIGW-->>User: Forward Response
         end
     else User Not Found
-        AuthSvc-->>-APIGW: Response (401 Unauthorized)
-        APIGW-->>-User: Forward Response
+        AuthSvc-->>APIGW: Response (401 Unauthorized)
+        APIGW-->>User: Forward Response
     end
+    AuthSvc-->>-APIGW: End processing
+    APIGW-->>-User: Complete request
 ```
 
 ### 2. Product Creation & Search Indexing Flow
