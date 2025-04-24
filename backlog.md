@@ -23,7 +23,6 @@ graph TB
         Product["Product Service"]
         Order["Order Service"]
         Payment["Payment Service"]
-        Inventory["Inventory Service"]
         Search["Search Service"]
         Analytics["Analytics Service"]
         Notification["Notification Service"]
@@ -31,6 +30,7 @@ graph TB
         CMS["CMS Service"]
         Recommendation["Recommendation Service"]
         Review["Review & Ratings Service"]
+        Cart["Cart Service"]
     end
 
     subgraph "Message Broker"
@@ -50,6 +50,7 @@ graph TB
         NotificationDB["Notification PostgreSQL DB"]
         CMSDB["CMS PostgreSQL DB"]
         ReviewDB["Review PostgreSQL DB"]
+        CartDB["Cart PostgreSQL DB"]
     end
 
     subgraph "Analytics Platform"
@@ -82,7 +83,6 @@ graph TB
     Gateway -->|"HTTP/2"| Product
     Gateway -->|"HTTP/2"| Order
     Gateway -->|"HTTP/2"| Payment
-    Gateway -->|"HTTP/2"| Inventory
     Gateway -->|"HTTP/2"| Search
     Gateway -->|"HTTP/2"| Analytics
     Gateway -->|"HTTP/2"| Notification
@@ -90,6 +90,7 @@ graph TB
     Gateway -->|"HTTP/2"| CMS
     Gateway -->|"HTTP/2"| Recommendation
     Gateway -->|"HTTP/2"| Review
+    Gateway -->|"HTTP/2"| Cart
 
     %% Database Connections
     AuthUser -->|"node-postgres"| UserDB
@@ -99,18 +100,22 @@ graph TB
     Notification -->|"node-postgres"| NotificationDB
     CMS -->|"node-postgres"| CMSDB
     Review -->|"node-postgres"| ReviewDB
+    Cart -->|"node-postgres"| CartDB
 
     %% Cache Connections
     Product -->|"ioredis"| Redis
     AuthUser -->|"ioredis"| Redis
     Search -->|"ioredis"| Redis
     Order -->|"ioredis"| Redis
+    Cart -->|"ioredis"| Redis
 
     %% Kafka Connections
     Kafka -->|"Control"| ZK
     Order -->|"node-rdkafka"| Kafka
     Payment -->|"node-rdkafka"| Kafka
-    Inventory -->|"node-rdkafka"| Kafka
+    Product -->|"node-rdkafka"| Kafka
+    Search -->|"node-rdkafka"| Kafka
+    Cart -->|"node-rdkafka"| Kafka
 
     %% Analytics Connections
     Analytics -->|"ETL"| AnalyticsDB
@@ -128,10 +133,15 @@ graph TB
     Prometheus -->|"metrics"| Product
     Prometheus -->|"metrics"| Order
     Prometheus -->|"metrics"| Payment
-    Prometheus -->|"metrics"| Inventory
     Prometheus -->|"metrics"| Search
     Prometheus -->|"metrics"| Analytics
+    Prometheus -->|"metrics"| Cart
     Prometheus -->|"Prometheus API"| Grafana
+
+    %% Service dependencies
+    Order --- Cart
+    Order --- Product
+    Order --- Payment
 
 ```
 
