@@ -159,18 +159,21 @@ graph TB
 
 ## Microservices
 
-- **Auth**: Gestion des utilisateurs, authentification,roles, autorisations, addresses, whishlists ..
-- **Product**: Catalogue produits, détails, médias, catégories hierarchiques, variants, stock mouvement
-- **Order**: Création et gestion des commandes,
-- **Payment**: Traitement des paiements et transactions
-- **Search**: Moteur de recherche produits (Elasticsearch)
-- **Analytics**: Collecte et analyse des données utilisateurs et comportements
-- **Notification**: Envoi d'emails, SMS, notifications push
-- **Promotion**: Gestion des réductions, coupons, offres spéciales
-- **CMS**: Gestion et personnalisation du contenu (textes, images, sections, landing pages ...)
-- **Recommendation**: Suggestions personnalisées aux utilisateurs (Machine Learning)
-- **Review**: Avis clients et système de notation
-- **Cart**: Carts for both anonymous (guest) and registred Users.
+| Service                    | Description                                                                 |
+|---------------------------|-----------------------------------------------------------------------------|
+| **Auth/User Service**     | Gestion des utilisateurs, authentification,roles, autorisations, addresses, whishlists ..  |
+| **Product Service**       | Catalogue produits, détails, médias, catégories hierarchiques, variants, stock mouvement  |
+| **Order Service**         | Traite la gestion des commandes.                                            |
+| **Payment Service**       | Assure le traitement des paiements.                                         |
+| **Search Service**        | Moteur de recherche produits (Elasticsearch) (communication asynchrone avec service produits |
+| **Analytics Service**     | Collecte et analyse des données utilisateurs et comportements           |
+| **Notification Service**  | Gère les notifications envoyées aux utilisateurs.                           |
+| **Promotion Service**     | Supervise les activités promotionnelles.                                    |
+| **CMS Service**           | Gère le contenu de la page d’accueil (bannières, textes, polices, couleurs, etc.). |
+| **Recommendation Service**| Suggestions personnalisées aux utilisateurs (Machine Learning) |
+| **Review & Ratings Service** | Gère les avis et notations des clients.                                |
+| **Cart Service**          | Gère les paniers pour les utilisateurs anonymes (invités) et enregistrés.   |
+
 ## Bases de données
 
 - PostgreSQL dédiée par service pour isolation et scalabilité
