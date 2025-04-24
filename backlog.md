@@ -157,6 +157,21 @@ graph TB
 - **Message Broker**: Kafka/ZooKeeper pour communication asynchrone entre services
 - **DevOps**: CI/CD avec Jenkins, orchestration Kubernetes, monitoring Prometheus/Grafana
 
+## Architecture Technique
+
+| Composant                        | Description                                      |
+|----------------------------------|--------------------------------------------------|
+| **Style architectural**          | Microservices                                    |
+| **Frontend**                     | React                                            |
+| **Backend**                      | Node.js                                          |
+| **Base de données**              | PostgreSQL                                       |
+| **Orchestration & Opérationnalisation** | Kubernetes                              |
+| **Message Broker**              | Kafka                                            |
+| **Cache**                        | Redis                                            |
+| **Pipeline CI/CD**               | Jenkins                                          |
+| **Monitoring**                   | Prometheus, Grafana                              |
+
+
 ## Microservices
 
 | **Service**                 | **Description**                                                                 |
