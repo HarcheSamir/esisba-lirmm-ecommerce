@@ -159,20 +159,20 @@ graph TB
 
 ## Microservices
 
-| Service                    | Description                                                                 |
-|---------------------------|-----------------------------------------------------------------------------|
-| **Auth/User Service**     | Gestion des utilisateurs, authentification,roles, autorisations, addresses, whishlists ..  |
-| **Product Service**       | Catalogue produits, détails, médias, catégories hierarchiques, variants, stock mouvement  |
-| **Order Service**         | Traite la gestion des commandes.                                            |
-| **Payment Service**       | Assure le traitement des paiements.                                         |
-| **Search Service**        | Moteur de recherche produits (Elasticsearch) (communication asynchrone avec service produits |
-| **Analytics Service**     | Collecte et analyse des données utilisateurs et comportements           |
-| **Notification Service**  | Gère les notifications envoyées aux utilisateurs.                           |
-| **Promotion Service**     | Supervise les activités promotionnelles.                                    |
-| **CMS Service**           | Gère le contenu de la page d’accueil (bannières, textes, polices, couleurs, etc.). |
-| **Recommendation Service**| Suggestions personnalisées aux utilisateurs (Machine Learning) |
-| **Review & Ratings Service** | Gère les avis et notations des clients.                                |
-| **Cart Service**          | Gère les paniers pour les utilisateurs anonymes (invités) et enregistrés.   |
+Service | Description
+Auth Service | Authentification, gestion des sessions, rôles, permissions, tokens, etc.
+User Service | Gestion des utilisateurs : profils, adresses, wishlists
+Product Service | Catalogue produits, détails, médias, catégories hiérarchiques, variants, stock
+Order Service | Gestion complète des commandes, états, historique
+Payment Service | Traitement et validation des paiements
+Search Service | Moteur de recherche (Elasticsearch), communication asynchrone avec Produits
+Analytics Service | Collecte et analyse des données utilisateur et comportement
+Notification Service | Envoi des notifications (email, push, SMS, etc.)
+Promotion Service | Gestion des promotions, coupons, campagnes
+CMS Service | Gestion du contenu dynamique (bannières, textes, styles, etc.)
+Recommendation Service | Suggestions personnalisées (basées sur ML et analytics)
+Review & Ratings Service | Gestion des avis et notes produits
+Cart Service | Gestion des paniers utilisateurs (invités et enregistrés)
 
 ## Bases de données
 
