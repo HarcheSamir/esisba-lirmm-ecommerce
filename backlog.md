@@ -159,20 +159,22 @@ graph TB
 
 ## Microservices
 
-Service | Description
-Auth Service | Authentification, gestion des sessions, rôles, permissions, tokens, etc.
-User Service | Gestion des utilisateurs : profils, adresses, wishlists
-Product Service | Catalogue produits, détails, médias, catégories hiérarchiques, variants, stock
-Order Service | Gestion complète des commandes, états, historique
-Payment Service | Traitement et validation des paiements
-Search Service | Moteur de recherche (Elasticsearch), communication asynchrone avec Produits
-Analytics Service | Collecte et analyse des données utilisateur et comportement
-Notification Service | Envoi des notifications (email, push, SMS, etc.)
-Promotion Service | Gestion des promotions, coupons, campagnes
-CMS Service | Gestion du contenu dynamique (bannières, textes, styles, etc.)
-Recommendation Service | Suggestions personnalisées (basées sur ML et analytics)
-Review & Ratings Service | Gestion des avis et notes produits
-Cart Service | Gestion des paniers utilisateurs (invités et enregistrés)
+| **Service**                 | **Description**                                                                 |
+|----------------------------|----------------------------------------------------------------------------------|
+| **Auth Service**           | Authentification, gestion des sessions, rôles, permissions, tokens, etc.        |
+| **User Service**           | Gestion des utilisateurs : profils, adresses, wishlists                         |
+| **Product Service**        | Catalogue produits, détails, médias, catégories hiérarchiques, variants, stock |
+| **Order Service**          | Gestion complète des commandes, états, historique                               |
+| **Payment Service**        | Traitement et validation des paiements                                          |
+| **Search Service**         | Moteur de recherche (Elasticsearch), communication asynchrone avec Produits     |
+| **Analytics Service**      | Collecte et analyse des données utilisateur et comportement                     |
+| **Notification Service**   | Envoi des notifications (email, push, SMS, etc.)                                |
+| **Promotion Service**      | Gestion des promotions, coupons, campagnes                                      |
+| **CMS Service**            | Gestion du contenu dynamique (bannières, textes, styles, etc.)                  |
+| **Recommendation Service** | Suggestions personnalisées (basées sur ML et analytics)                         |
+| **Review & Ratings Service** | Gestion des avis et notes produits                                            |
+| **Cart Service**           | Gestion des paniers utilisateurs (invités et enregistrés)                       |
+
 
 ## Bases de données
 
