@@ -172,8 +172,8 @@ graph TD
             B4[permission.routes.js]
         end
         subgraph "Middlewares"
-            C1[auth.js<br>(Vérification JWT)]
-            C2[permission.js<br>(Vérification RBAC)]
+            C1["auth.js (Vérification JWT)"]
+            C2["permission.js (Vérification RBAC)"]
             C3[errorHandler.js]
         end
         subgraph "Logique Métier (Contrôleurs)"
@@ -185,21 +185,21 @@ graph TD
             E[Client Prisma]
         end
         subgraph "Communication Externe"
-            F[Producteur Kafka<br>(kafka/producer.js)]
-            G[Client Consul<br>(config/consul.js)]
+            F["Producteur Kafka (kafka/producer.js)"]
+            G["Client Consul (config/consul.js)"]
         end
     end
     
-    API_Gateway -- "Requête HTTP" --> A
+    API_Gateway["API Gateway"] -- "Requête HTTP" --> A
     A --> B1 & B2 & B3 & B4
     B1 & B2 & B3 & B4 -- "Utilise" --> C1 & C2
     C1 & C2 --> D1 & D2 & D3
     D1 & D2 & D3 -- "Invoque" --> E
     D1 & D2 & D3 -- "Envoie via" --> F
     A -- "Rapporte Erreurs à" --> C3
-    E -- "Dialogue avec" --> Auth_DB[(Auth DB)]
-    F -- "Publie sur" --> Kafka[(Kafka Bus)]
-    G -- "S'enregistre auprès de" --> Consul_Svc[(Consul)]
+    E -- "Dialogue avec" --> Auth_DB[("Auth DB")]
+    F -- "Publie sur" --> Kafka[("Kafka Bus")]
+    G -- "S'enregistre auprès de" --> Consul_Svc[("Consul")]
 ```
 
 #### **Composants du `product-service`**
