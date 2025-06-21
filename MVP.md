@@ -108,10 +108,10 @@ graph TD
         end
 
         subgraph "Services d'Infrastructure"
-            Consul[Consul<br/>(Service Discovery)]
-            Kafka_Bus[Kafka<br/>(Message Broker)]
-            Elasticsearch[Elasticsearch<br/>(Recherche)]
-            Redis[Redis<br/>(Cache Panier)]
+            Consul["Consul<br/>(Service Discovery)"]
+            Kafka_Bus["Kafka<br/>(Message Broker)"]
+            Elasticsearch["Elasticsearch<br/>(Recherche)"]
+            Redis["Redis<br/>(Cache Panier)"]
 
             subgraph "Bases de Données (PostgreSQL)"
                 Auth_DB[(Auth DB)]
@@ -143,18 +143,15 @@ graph TD
         Order_Service --- Consul
         API_Gateway --- Consul
 
-        Auth_Service -- Événements Auth --> Kafka_Bus
-        Product_Service -- Événements Produit --> Kafka_Bus
+        Auth_Service -- "Événements Auth" --> Kafka_Bus
+        Product_Service -- "Événements Produit" --> Kafka_Bus
 
-        Kafka_Bus -- Événements Auth --> Order_Service
-        Kafka_Bus -- Événements Produit --> Order_Service
-        Kafka_Bus -- Événements Produit --> Search_Service
+        Kafka_Bus -- "Événements Auth" --> Order_Service
+        Kafka_Bus -- "Événements Produit" --> Order_Service
+        Kafka_Bus -- "Événements Produit" --> Search_Service
 
         Search_Service --> Elasticsearch
     end
-
-    style Client fill:#fff,stroke:#333,stroke-width:2px
-    style Kafka_Bus fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ### **2.2. Flux de Données et Communication**
