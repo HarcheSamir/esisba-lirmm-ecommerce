@@ -351,7 +351,7 @@ Les `Dockerfile` sont optimisés pour réduire la taille des images et les temps
 #### **7.2. Stratégie d'Orchestration (Kubernetes)**
 *   **Diagramme de Déploiement Physique**
     ```mermaid
-   graph TD
+     graph TD
     subgraph "Hardware/VM (Node 1)"
         Kubelet1["Kubelet"]
         subgraph "Pods"
