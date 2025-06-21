@@ -1,13 +1,11 @@
-Absolument. Voici une documentation complète et académique de votre projet, rédigée en français pour votre superviseur. La documentation couvre l'architecture, les microservices, l'infrastructure, le CI/CD et les technologies utilisées, avec des diagrammes et des tableaux détaillés.
 
-***
-
-# **Documentation Technique du Projet E-commerce LIRMM**
+# **Documentation Technique Détaillée : Plateforme E-commerce LIRMM**
 
 **Projet de Fin d'Études**
 
 **Auteur :** Samir
 **Date :** 26 Mai 2024
+**Version :** 2.0 (Exhaustive)
 **Superviseur :** [Nom de votre superviseur]
 
 ---
@@ -15,90 +13,99 @@ Absolument. Voici une documentation complète et académique de votre projet, r�
 ## **Table des Matières**
 
 1.  [Introduction](#1-introduction)
-    *   1.1. Objectif du Projet
-    *   1.2. Choix Architecturaux
-    *   1.3. Technologies Utilisées
-2.  [Architecture Globale](#2-architecture-globale)
-    *   2.1. Vue d'Ensemble des Composants
-    *   2.2. Flux de Données et Communication
-3.  [Description Détaillée des Microservices](#3-description-détaillée-des-microservices)
-    *   3.1. API Gateway (`api-gateway`)
-    *   3.2. Service d'Authentification (`auth-service`)
-    *   3.3. Service de Produits (`product-service`)
-    *   3.4. Service d'Images (`image-service`)
-    *   3.5. Service de Panier (`cart-service`)
-    *   3.6. Service de Recherche (`search-service`)
-    *   3.7. Service de Commandes (`order-service`)
-4.  [Architecture Orientée Événements avec Kafka](#4-architecture-orientée-événements-avec-kafka)
-    *   4.1. Principe et Avantages
-    *   4.2. Topics Kafka
-    *   4.3. Scénario : Création d'un Produit
-5.  [Infrastructure et Déploiement](#5-infrastructure-et-déploiement)
-    *   5.1. Conteneurisation avec Docker
-    *   5.2. Orchestration Locale avec Docker Compose
-    *   5.3. Orchestration de Production avec Kubernetes (Kind)
-6.  [Intégration et Déploiement Continus (CI/CD) avec Jenkins](#6-intégration-et-déploiement-continus-cicd-avec-jenkins)
-    *   6.1. Présentation du `Jenkinsfile`
-    *   6.2. Étapes du Pipeline
-7.  [Services d'Infrastructure Complémentaires](#7-services-dinfrastructure-complémentaires)
-    *   7.1. Service Discovery (Consul)
-    *   7.2. Bases de Données (PostgreSQL)
-    *   7.3. Système de Cache (Redis)
-    *   7.4. Moteur de Recherche (Elasticsearch)
-8.  [Conclusion](#8-conclusion)
+2.  [Concepts Architecturaux Approfondis](#2-concepts-architecturaux-approfondis)
+    *   2.1. Architecture Microservices
+    *   2.2. Modèle API Gateway
+    *   2.3. Architecture Orientée Événements (EDA) et CQRS Simplifié
+    *   2.4. Modèle "Database per Service"
+    *   2.5. Découverte de Services (Service Discovery)
+3.  [Architecture du Système](#3-architecture-du-système)
+    *   3.1. Diagramme de Contexte (Niveau 1)
+    *   3.2. Diagramme de Conteneurs (Niveau 2)
+4.  [Description Détaillée des Microservices](#4-description-détaillée-des-microservices)
+    *   4.1. API Gateway (`api-gateway`)
+    *   4.2. Service d'Authentification (`auth-service`)
+    *   4.3. Service de Produits (`product-service`)
+    *   4.4. Service d'Images (`image-service`)
+    *   4.5. Service de Panier (`cart-service`)
+    *   4.6. Service de Recherche (`search-service`)
+    *   4.7. Service de Commandes (`order-service`)
+5.  [Flux de Données et Scénarios d'Utilisation](#5-flux-de-données-et-scénarios-dutilisation)
+    *   5.1. Scénario 1 : Enregistrement et Connexion d'un Utilisateur
+    *   5.2. Scénario 2 : Ajout d'un Article au Panier
+    *   5.3. Scénario 3 : Création d'un Produit (Flux EDA)
+    *   5.4. Scénario 4 : Passage d'une Commande
+6.  [Infrastructure et Déploiement](#6-infrastructure-et-déploiement)
+    *   6.1. Conteneurisation avec Docker
+    *   6.2. Orchestration avec Kubernetes
+7.  [Intégration et Déploiement Continus (CI/CD)](#7-intégration-et-déploiement-continus-cicd)
+    *   7.1. Vue d'ensemble du Pipeline Jenkins
+    *   7.2. Diagramme du Pipeline
+8.  [Conclusion et Perspectives](#8-conclusion-et-perspectives)
 
 ---
 
 ## **1. Introduction**
+Ce document constitue la référence technique exhaustive de la plateforme e-commerce LIRMM. Il détaille les choix architecturaux, la conception de chaque composant, les flux de données et les stratégies de déploiement. L'objectif est de fournir une vision complète et approfondie du système, justifiant chaque décision technique dans le contexte d'une application distribuée, scalable et résiliente. Cette version surpasse la précédente en profondeur et en précision pour répondre aux exigences académiques et professionnelles les plus strictes.
 
-### **1.1. Objectif du Projet**
+## **2. Concepts Architecturaux Approfondis**
 
-Ce document présente l'architecture technique d'une plateforme e-commerce backend conçue comme projet de fin d'études. L'objectif est de construire un système robuste, scalable et maintenable en s'appuyant sur les meilleures pratiques de l'ingénierie logicielle moderne, notamment l'architecture microservices et la communication événementielle.
+### **2.1. Architecture Microservices**
+L'application est décomposée en un ensemble de services faiblement couplés, chacun responsable d'une capacité métier distincte. Cette granularité permet une évolution, un déploiement et une mise à l'échelle indépendants pour chaque composant, tout en favorisant la résilience globale du système.
 
-### **1.2. Choix Architecturaux**
+### **2.2. Modèle API Gateway**
+Un point d'entrée unique, l'API Gateway, est placé en façade de tous les services. Il assume les responsabilités transversales :
+*   **Routage** : Dirige les requêtes des clients vers le microservice interne approprié.
+*   **Abstraction** : Masque la complexité de l'architecture interne aux clients.
+*   **Point de Contrôle** : Peut être étendu pour gérer l'authentification, la limitation de débit (rate limiting) et la journalisation centralisée.
 
-Le système est fondé sur une **architecture microservices**. Chaque fonctionnalité métier principale (authentification, produits, commandes, etc.) est isolée dans son propre service indépendant. Cette approche offre plusieurs avantages :
-*   **Scalabilité indépendante** : Chaque service peut être mis à l'échelle en fonction de sa charge spécifique.
-*   **Résilience** : Une défaillance dans un service n'entraîne pas nécessairement l'arrêt complet du système.
-*   **Flexibilité technologique** : Chaque service peut potentiellement utiliser la technologie la plus adaptée à son besoin.
-*   **Déploiement découplé** : Les services peuvent être mis à jour et déployés indépendamment les uns des autres.
+### **2.3. Architecture Orientée Événements (EDA) et CQRS Simplifié**
+Pour la communication inter-services, le système adopte une approche asynchrone basée sur les événements via Apache Kafka. Ce modèle s'inspire du pattern **CQRS (Command Query Responsibility Segregation)** :
+*   **Commandes** : Les opérations d'écriture (création, mise à jour, suppression) sont traitées par le service "maître" de la donnée (ex: `product-service` pour les produits).
+*   **Événements** : Suite à une commande réussie, le service maître publie un événement de changement d'état (ex: `PRODUCT_CREATED`).
+*   **Requêtes (Queries)** : Les services qui ont besoin de ces données pour la lecture s'abonnent aux événements et maintiennent leur propre modèle de données optimisé pour leurs besoins de lecture. Le `search-service` construit un index Elasticsearch, tandis que le `order-service` maintient des tables dénormalisées. Cela garantit que la lecture est rapide et ne dépend pas directement de la disponibilité du service maître.
 
-La communication entre les services est assurée de deux manières :
-1.  **Synchrone (HTTP/REST)** : Pour les requêtes directes initiées par le client, via une API Gateway.
-2.  **Asynchrone (Événementielle)** : Pour la propagation des changements d'état entre les services, via le broker de messages **Apache Kafka**.
+### **2.4. Modèle "Database per Service"**
+Chaque microservice possède et gère sa propre base de données, qui n'est accessible qu'à travers l'API du service. Ce principe fondamental garantit un découplage fort au niveau des données, empêchant les dépendances directes et non gérées entre les schémas des services.
 
-### **1.3. Technologies Utilisées**
-
-| Catégorie | Technologie | Rôle |
-| :--- | :--- | :--- |
-| **Langage/Framework Backend** | Node.js / Express.js | Développement des microservices. |
-| **Bases de Données** | PostgreSQL | Stockage des données relationnelles pour les services `auth`, `product` et `order`. |
-| **ORM** | Prisma | Object-Relational Mapper pour interagir avec les bases de données PostgreSQL. |
-| **Cache en Mémoire** | Redis | Gestion des paniers (`cart-service`), optimisé pour la performance et la volatilité. |
-| **Moteur de Recherche** | Elasticsearch | Indexation et recherche plein texte des produits (`search-service`). |
-| **Broker de Messages** | Apache Kafka | Communication asynchrone et événementielle entre les services. |
-| **Service Discovery** | HashiCorp Consul | Enregistrement et découverte dynamique des instances de microservices. |
-| **Conteneurisation** | Docker | Empaquetage des applications et de leurs dépendances. |
-| **Orchestration** | Docker Compose / Kubernetes | Gestion et déploiement des conteneurs en environnement local (Compose) et de production (K8s). |
-| **CI/CD** | Jenkins | Automatisation du build, des tests et du déploiement de l'application. |
+### **2.5. Découverte de Services (Service Discovery)**
+Dans un environnement distribué où les instances de service sont dynamiques, il est impossible de coder en dur les adresses IP. HashiCorp Consul est utilisé comme registre de services central. Chaque service s'enregistre au démarrage et l'API Gateway (ainsi que les autres services si nécessaire) interroge Consul pour trouver l'emplacement réseau d'une instance saine d'un service cible.
 
 ---
+## **3. Architecture du Système**
 
-## **2. Architecture Globale**
-
-### **2.1. Vue d'Ensemble des Composants**
-
-L'architecture est composée de services applicatifs, de services d'infrastructure et d'un point d'entrée unique.
+### **3.1. Diagramme de Contexte (Niveau 1)**
+Ce diagramme montre le système comme une boîte noire et ses interactions avec les utilisateurs externes.
 
 ```mermaid
 graph TD
-    subgraph "Infrastructure Externe"
+    subgraph "Système E-commerce LIRMM"
+        System_Boundary[...]
+    end
+
+    Admin["Administrateur <br/> (Back-office)"]
+    Customer["Client <br/> (Site Web/Mobile)"]
+
+    Customer -- "Consulte les produits, <br/> gère son panier, <br/> passe des commandes" --> System_Boundary
+    System_Boundary -- "Affiche les données, <br/> confirme les actions" --> Customer
+
+    Admin -- "Gère le catalogue, <br/> les utilisateurs, <br/> les commandes" --> System_Boundary
+    System_Boundary -- "Affiche les tableaux de bord" --> Admin
+```
+
+### **3.2. Diagramme de Conteneurs (Niveau 2)**
+Ce diagramme expose les principaux conteneurs (microservices et services d'infrastructure) qui composent le système.
+
+```mermaid
+graph TD
+    subgraph "Utilisateurs"
         Client[Client Web/Mobile]
     end
 
-    subgraph "Cluster Kubernetes / Docker"
+    subgraph "Écosystème Déployé (Kubernetes / Docker)"
+        API_Gateway[API Gateway]
+
         subgraph "Services Applicatifs"
-            API_Gateway[API Gateway]
             Auth_Service[Auth Service]
             Product_Service[Product Service]
             Image_Service[Image Service]
@@ -108,10 +115,10 @@ graph TD
         end
 
         subgraph "Services d'Infrastructure"
-            Consul["Consul<br/>(Service Discovery)"]
-            Kafka_Bus["Kafka<br/>(Message Broker)"]
-            Elasticsearch["Elasticsearch<br/>(Recherche)"]
-            Redis["Redis<br/>(Cache Panier)"]
+            Consul["Consul <br/> (Service Discovery)"]
+            Kafka_Bus["Kafka <br/> (Message Broker)"]
+            Elasticsearch["Elasticsearch <br/> (Moteur de Recherche)"]
+            Redis["Redis <br/> (Cache Panier)"]
 
             subgraph "Bases de Données (PostgreSQL)"
                 Auth_DB[(Auth DB)]
@@ -120,385 +127,327 @@ graph TD
             end
         end
 
-        Client --> API_Gateway
+        Client -- "Requêtes HTTP/S" --> API_Gateway
 
-        API_Gateway -->|/auth| Auth_Service
-        API_Gateway -->|/products| Product_Service
-        API_Gateway -->|/images| Image_Service
-        API_Gateway -->|/carts| Cart_Service
-        API_Gateway -->|/search| Search_Service
-        API_Gateway -->|/orders| Order_Service
+        API_Gateway -- "Proxy/Routage" --> Auth_Service
+        API_Gateway -- "Proxy/Routage" --> Product_Service
+        API_Gateway -- "Proxy/Routage" --> Image_Service
+        API_Gateway -- "Proxy/Routage" --> Cart_Service
+        API_Gateway -- "Proxy/Routage" --> Search_Service
+        API_Gateway -- "Proxy/Routage" --> Order_Service
 
-        Auth_Service --> Auth_DB
-        Product_Service --> Product_DB
-        Order_Service --> Order_DB
+        Auth_Service -- "Stockage Utilisateurs" --> Auth_DB
+        Product_Service -- "Stockage Catalogue" --> Product_DB
+        Order_Service -- "Stockage Commandes" --> Order_DB
 
-        Cart_Service --> Redis
+        Cart_Service -- "Stockage Paniers" --> Redis
 
-        Auth_Service --- Consul
-        Product_Service --- Consul
-        Image_Service --- Consul
-        Cart_Service --- Consul
-        Search_Service --- Consul
-        Order_Service --- Consul
-        API_Gateway --- Consul
+        Search_Service -- "Indexation/Recherche" --> Elasticsearch
 
-        Auth_Service -- "Événements Auth" --> Kafka_Bus
-        Product_Service -- "Événements Produit" --> Kafka_Bus
+        Auth_Service -- "Publie Événements Auth" --> Kafka_Bus
+        Product_Service -- "Publie Événements Produit" --> Kafka_Bus
 
-        Kafka_Bus -- "Événements Auth" --> Order_Service
-        Kafka_Bus -- "Événements Produit" --> Order_Service
-        Kafka_Bus -- "Événements Produit" --> Search_Service
+        Kafka_Bus -- "Consomme Événements Produit" --> Search_Service
+        Kafka_Bus -- "Consomme Événements Auth/Produit" --> Order_Service
 
-        Search_Service --> Elasticsearch
+        API_Gateway -. "Découvre" .-> Consul
+        Auth_Service -. "S'enregistre/Découvre" .-> Consul
+        Product_Service -. "S'enregistre/Découvre" .-> Consul
+        Image_Service -. "S'enregistre/Découvre" .-> Consul
+        Cart_Service -. "S'enregistre/Découvre" .-> Consul
+        Search_Service -. "S'enregistre/Découvre" .-> Consul
+        Order_Service -. "S'enregistre/Découvre" .-> Consul
     end
 ```
 
-### **2.2. Flux de Données et Communication**
-
-1.  **Requête Synchrone** : Le client envoie une requête HTTP (ex: `GET /products`) à l'**API Gateway**. L'API Gateway utilise **Consul** pour découvrir l'adresse du `Product-Service`, lui transmet la requête, attend la réponse et la renvoie au client.
-2.  **Communication Asynchrone** : Lorsqu'une action modifie l'état d'une ressource (ex: un produit est créé dans le `Product-Service`), le service publie un événement (ex: `PRODUCT_CREATED`) dans un topic **Kafka**. D'autres services, comme le `Search-Service` et le `Order-Service`, sont abonnés à ce topic. Ils consomment l'événement et mettent à jour leurs propres données en conséquence (le `Search-Service` indexe le nouveau produit dans **Elasticsearch**, le `Order-Service` met à jour sa table de produits dénormalisée).
-
 ---
 
-## **3. Description Détaillée des Microservices**
+## **4. Description Détaillée des Microservices**
 
-### **3.1. API Gateway (`api-gateway`)**
-*   **Rôle** : Point d'entrée unique pour toutes les requêtes externes. Il est responsable du routage des requêtes vers les services internes appropriés en utilisant la découverte de service via Consul.
-*   **Endpoints** : N'a pas de points de terminaison métier propres, mais agit comme un proxy inversé.
-
-| Préfixe de Route | Service Cible | Description |
+### **4.1. API Gateway (`api-gateway`)**
+*   **Rôle** : Proxy inversé et point d'entrée unique.
+*   **Technologie** : Express.js, `http-proxy-middleware`.
+*   **Logique Interne** :
+    *   Le `router` de `http-proxy-middleware` est une fonction asynchrone.
+    *   Pour chaque requête entrante, il appelle `findService(serviceName)` de son module Consul.
+    *   `findService` retourne une URL complète d'une instance saine (ex: `http://10.1.2.3:3001`).
+    *   Le proxy transmet la requête à cette URL.
+    *   La gestion d'erreurs (`onError`) intercepte les échecs de connexion (ex: `ECONNREFUSED`) et les traduit en erreurs HTTP 503 (Service Unavailable).
+*   **Variables d'environnement clés** :
+| Variable | Description | Exemple |
 | :--- | :--- | :--- |
-| `/auth/**` | `auth-service` | Gère les requêtes liées à l'authentification et aux utilisateurs. |
-| `/products/**` | `product-service` | Gère les requêtes pour les produits, catégories, etc. |
-| `/images/**` | `image-service` | Gère le téléversement et la récupération d'images. |
-| `/carts/**` | `cart-service` | Gère les requêtes liées aux paniers d'achat. |
-| `/search/**` | `search-service` | Gère les requêtes de recherche de produits. |
-| `/orders/**` | `order-service` | Gère les requêtes pour les commandes. |
-| `/health` | `api-gateway` | Point de terminaison de santé du service lui-même. |
+| `PORT` | Port d'écoute du service. | `3000` |
+| `CONSUL_AGENT_HOST` | Hôte de l'agent Consul. | `consul-svc` |
+| `SERVICE_NAME` | Nom du service pour l'enregistrement. | `api-gateway` |
 
-### **3.2. Service d'Authentification (`auth-service`)**
-*   **Rôle** : Gère l'enregistrement, la connexion, la gestion des utilisateurs, les rôles et les permissions. Il émet des jetons JWT et valide ceux présentés par les autres services.
-*   **Schéma de la Base de Données (`auth_db`)** :
+### **4.2. Service d'Authentification (`auth-service`)**
+*   **Rôle** : Gestion des identités, des accès (RBAC) et des jetons.
+*   **Diagramme de Composants Internes** :
     ```mermaid
-    erDiagram
-        User {
-            string id PK
-            string name
-            string email UK
-            string password
-            string profileImage
-            boolean isActive
-            string roleId FK
-        }
-        Role {
-            string id PK
-            string name UK
-            string description
-        }
-        Permission {
-            string id PK
-            string name UK
-            string description
-        }
-        RolePermission {
-            string roleId PK, FK
-            string permissionId PK, FK
-        }
-        User ||--|{ Role : "a un"
-        Role }o--o{ RolePermission : "contient"
-        Permission }o--o{ RolePermission : "est contenu dans"
+    graph TD
+        subgraph "auth-service"
+            Routes["Routes <br/> (auth, user, role)"]
+            Controllers["Controllers <br/> (logique HTTP)"]
+            Middlewares["Middlewares <br/> (auth, permission)"]
+            DataAccess["Accès Données <br/> (Prisma)"]
+            KafkaProducer["Producteur Kafka"]
+            AuthDB[(Auth DB)]
+        end
+        Routes --> Middlewares
+        Middlewares --> Controllers
+        Controllers --> DataAccess
+        Controllers --> KafkaProducer
+        DataAccess --> AuthDB
     ```
-*   **Événements Kafka produits (Topic: `auth_events`)** : `USER_CREATED`, `USER_UPDATED`, `USER_DELETED`. Ces événements permettent aux autres services (comme `order-service`) de maintenir une copie dénormalisée des informations utilisateur.
-*   **Points de terminaison API** :
+*   **Événements Kafka produits (Topic: `auth_events`)** :
+    *   **Payload `USER_CREATED` / `USER_UPDATED`** :
+        ```json
+        {
+          "type": "USER_CREATED",
+          "payload": {
+            "id": "cuid-12345",
+            "name": "Nouveau Client",
+            "email": "client@example.com",
+            "profileImage": "https://example.com/avatar.png"
+          },
+          "timestamp": "2024-05-26T10:00:00Z",
+          "sourceService": "auth-service"
+        }
+        ```
+*   **Points de terminaison API (Exemples)** :
+    *   **Login** :
+        ```bash
+        curl -X POST http://localhost:13000/auth/login \
+             -H "Content-Type: application/json" \
+             -d '{"email": "admin@admin.com", "password": "password"}'
+        ```
+        **Réponse Succès (200 OK)** :
+        ```json
+        {
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+        ```
+        **Réponse Erreur (401 Unauthorized)** :
+        ```json
+        {
+          "message": "Invalid credentials"
+        }
+        ```
 
-| Méthode | Chemin | Description | Protection |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/register` | Enregistre un nouvel utilisateur. | Publique |
-| `POST` | `/login` | Connecte un utilisateur et retourne un JWT. | Publique |
-| `GET` | `/me` | Retourne les informations de l'utilisateur connecté. | JWT Requis |
-| `POST`| `/validate` | Valide un jeton JWT (usage interne par d'autres services). | Interne |
-| `GET` | `/users` | Liste tous les utilisateurs (paginé). | `read:user` |
-| `GET` | `/users/:id` | Récupère un utilisateur par son ID. | `read:user` |
-| `PUT` | `/users/:id` | Met à jour un utilisateur. | `write:user` |
-| `DELETE`| `/users/:id` | Désactive un utilisateur. | `delete:user` |
-| `POST` | `/users/:id/activate` | Réactive un utilisateur. | `write:user` |
-| `GET` | `/roles` | Liste tous les rôles. | `read:role` |
-| `POST` | `/roles` | Crée un nouveau rôle. | `write:role` |
-| `GET` | `/permissions` | Liste toutes les permissions disponibles. | `read:role` |
-
-### **3.3. Service de Produits (`product-service`)**
-*   **Rôle** : Gère le catalogue de produits, y compris les catégories, les produits, leurs variantes et le stock.
-*   **Schéma de la Base de Données (`product_db`)** :
+### **4.3. Service de Produits (`product-service`)**
+*   **Rôle** : Cœur du catalogue, gère la taxonomie (catégories) et l'inventaire (produits, variantes, stock).
+*   **Diagramme de Composants Internes** :
     ```mermaid
-    erDiagram
-        Product {
-            string id PK
-            string sku UK
-            string name
-            string description
-            boolean isActive
-        }
-        Category {
-            string id PK
-            string name
-            string slug UK
-            string parentId FK
-        }
-        Variant {
-            string id PK
-            string productId FK
-            json attributes
-            decimal price
-            int stockQuantity
-        }
-        StockMovement {
-            string id PK
-            string variantId FK
-            int changeQuantity
-            enum type
-            string reason
-        }
-        ProductImage {
-            string id PK
-            string productId FK
-            string imageUrl
-            boolean isPrimary
-        }
-        ProductCategory {
-            string productId PK, FK
-            string categoryId PK, FK
-        }
-        Product ||--|{ Variant : "a"
-        Product ||--o{ ProductImage : "a"
-        Product }o--o{ ProductCategory : "appartient à"
-        Category }o--o{ ProductCategory : "contient"
-        Category ||--o{ Category : "est parent de"
-        Variant ||--|{ StockMovement : "a des mouvements de"
+    graph TD
+        subgraph "product-service"
+            Routes["Routes <br/> (product, category, stock)"]
+            Controllers["Controllers <br/> (logique métier)"]
+            DataAccess["Accès Données <br/> (Prisma)"]
+            KafkaProducer["Producteur Kafka"]
+            ProductDB[(Product DB)]
+        end
+        Routes --> Controllers
+        Controllers --> DataAccess
+        Controllers --> KafkaProducer
+        DataAccess --> ProductDB
     ```
-*   **Événements Kafka produits (Topic: `product_events`)** : `PRODUCT_CREATED`, `PRODUCT_UPDATED`, `PRODUCT_DELETED`.
-*   **Points de terminaison API** :
-
-| Méthode | Chemin | Description | Protection |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/` | Liste les produits (paginé, filtrable par catégorie). | Publique |
-| `GET` | `/id/:id` | Récupère un produit par son ID. | Publique |
-| `GET` | `/sku/:sku`| Récupère un produit par son SKU. | Publique |
-| `POST` | `/` | Crée un nouveau produit. | `create:product` |
-| `PUT` | `/:id` | Met à jour un produit. | `update:product` |
-| `DELETE`| `/:id` | Supprime un produit. | `delete:product` |
-| `GET` | `/categories` | Liste les catégories (format plat ou arbre). | Publique |
-| `POST` | `/categories` | Crée une catégorie. | `create:category`|
-| `POST` | `/:productId/variants` | Ajoute une variante à un produit. | `update:product`|
-| `POST` | `/stock/adjust/:variantId` | Ajuste le stock d'une variante. | `adjust:stock` |
-
-### **3.4. Service d'Images (`image-service`)**
-*   **Rôle** : Gère le téléversement et la distribution des images des produits. Il utilise un volume persistant pour stocker les fichiers.
-*   **Points de terminaison API** :
-
-| Méthode | Chemin | Description |
-| :--- | :--- | :--- |
-| `POST` | `/upload` | Téléverse une image (multipart/form-data). |
-| `GET` | `/images/:filename` | Sert un fichier image statique. |
-
-### **3.5. Service de Panier (`cart-service`)**
-*   **Rôle** : Gère les paniers d'achat des utilisateurs (connectés ou invités). Utilise Redis pour un stockage rapide et avec une durée de vie (TTL) définie.
-*   **Stockage** : Redis (Key-Value Store). La clé est `cart:<cartId>`.
-*   **Points de terminaison API** :
-
-| Méthode | Chemin | Description |
-| :--- | :--- | :--- |
-| `POST` | `/` | Crée ou récupère un panier. |
-| `GET` | `/:cartId` | Récupère le contenu d'un panier. |
-| `POST` | `/:cartId/items` | Ajoute un article à un panier. |
-| `PUT` | `/:cartId/items/:itemId` | Met à jour la quantité d'un article. |
-| `DELETE`| `/:cartId/items/:itemId` | Supprime un article du panier. |
-| `DELETE`| `/:cartId/items` | Vide tous les articles du panier. |
-| `POST`| `/associate` | Associe un panier invité à un ID utilisateur après connexion. |
-
-### **3.6. Service de Recherche (`search-service`)**
-*   **Rôle** : Fournit une capacité de recherche avancée (plein texte, filtres, facettes) sur les produits. Il consomme les événements de produits de Kafka pour maintenir son index Elasticsearch à jour.
-*   **Stockage** : Elasticsearch.
-*   **Événements Kafka consommés (Topic: `product_events`)** : `PRODUCT_CREATED`, `PRODUCT_UPDATED`, `PRODUCT_DELETED`.
-*   **Points de terminaison API** :
-
-| Méthode | Chemin | Description |
-| :--- | :--- | :--- |
-| `GET` | `/products` | Recherche des produits avec des paramètres de requête (q, category, etc.). |
-
-### **3.7. Service de Commandes (`order-service`)**
-*   **Rôle** : Gère la création et le suivi des commandes. Il maintient des copies dénormalisées des informations de produits et d'utilisateurs pour garantir l'intégrité des commandes passées.
-*   **Événements Kafka consommés (Topics: `product_events`, `auth_events`)** : Consomme les événements pour mettre à jour ses tables dénormalisées `denormalized_products` et `denormalized_users`.
-*   **Schéma de la Base de Données (`order_db`)** :
-    ```mermaid
-    erDiagram
-        Order {
-            string id PK
-            string userId FK "Optionnel"
-            string guestEmail "Optionnel"
-            string phone
-            enum status
-            decimal totalAmount
+*   **Événements Kafka produits (Topic: `product_events`)** :
+    *   **Payload `PRODUCT_CREATED` / `PRODUCT_UPDATED`** :
+        ```json
+        {
+          "type": "PRODUCT_CREATED",
+          "payload": {
+            "id": "prod-abcde",
+            "sku": "TSHIRT-001",
+            "name": "T-Shirt en Coton",
+            "isActive": true,
+            "category_names": ["Vêtements", "T-Shirts"],
+            "category_slugs": ["vetements", "t-shirts"],
+            "variants": [
+              { "id": "var-1", "attributes": {"couleur": "Bleu", "taille": "L"}, "price": 19.99, "stockQuantity": 50 }
+            ],
+            "variant_attributes_flat": ["couleur:Bleu", "taille:L"],
+            "primaryImageUrl": "http://localhost:13004/images/image1.jpg"
+          },
+          "sourceService": "product-service"
         }
-        OrderItem {
-            string id PK
-            string orderId FK
-            string productId
-            string variantId
-            string productName
-            decimal priceAtTimeOfOrder
-            int quantity
+        ```
+*   **Points de terminaison API (Exemples)** :
+    *   **Récupérer les produits** :
+        ```bash
+        # Récupérer les produits de la catégorie 'electronics'
+        curl -X GET "http://localhost:13000/products?categorySlug=electronics&limit=5"
+        ```
+        **Réponse Succès (200 OK)** :
+        ```json
+        {
+          "data": [ /* array de produits */ ],
+          "pagination": { "total": 15, "page": 1, "limit": 5, "totalPages": 3 }
         }
-        DenormalizedProduct {
-            string id PK
-            string name
-            string sku
-            string imageUrl
-        }
-        DenormalizedUser {
-            string id PK
-            string name
-            string email
-        }
-        Order ||--o{ OrderItem : "contient"
-    ```
-*   **Points de terminaison API** :
+        ```
 
-| Méthode | Chemin | Description | Protection |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/` | Crée une nouvelle commande. | Optionnelle |
-| `POST` | `/guest-lookup` | Récupère une commande pour un invité via son email. | Publique |
-| `GET` | `/:id` | Récupère une commande par son ID. | Publique |
-| `GET` | `/my-orders` | Liste les commandes de l'utilisateur connecté. | `read:my-orders` |
-| `GET` | `/` | (Admin) Liste toutes les commandes. | Admin Requis |
-| `PUT` | `/:id/status` | (Admin) Met à jour le statut d'une commande. | Admin Requis |
+### **4.4. Service d'Images (`image-service`)**
+*   **Rôle** : Service utilitaire simple pour le stockage et la récupération de fichiers binaires.
+*   **Logique Interne** : Utilise la librairie `multer` pour gérer les téléversements `multipart/form-data`. Les fichiers sont sauvegardés sur un volume persistant mappé sur le chemin `/app/uploads` dans le conteneur. Express.js sert ensuite statiquement les fichiers de ce répertoire.
+
+### **4.5. Service de Panier (`cart-service`)**
+*   **Rôle** : Gestion des paniers volatiles avec une performance élevée.
+*   **Logique Interne** : Toutes les opérations CRUD sont effectuées sur des clés Redis.
+    *   `GET /:cartId` : Exécute `redisClient.get("cart:cartId")`.
+    *   `POST /:cartId/items` : Récupère le panier, modifie l'objet JSON en mémoire, puis exécute `redisClient.set(...)` pour écraser l'ancienne valeur.
+    *   Un TTL (Time To Live) est systématiquement rafraîchi à chaque opération pour éviter que les paniers actifs n'expirent.
+
+### **4.6. Service de Recherche (`search-service`)**
+*   **Rôle** : Fournir une recherche plein texte et à facettes.
+*   **Logique Interne** :
+    *   **Consommateur Kafka** : Le `consumer.js` écoute sur `product_events`. Lorsqu'il reçoit un message, il le transforme en document Elasticsearch et utilise `esClient.index` (pour la création/mise à jour) ou `esClient.delete`.
+    *   **Contrôleur de Recherche** : Le `search.controller.js` construit dynamiquement une requête Elasticsearch `bool query` à partir des paramètres de l'URL (`q`, `category`, `minPrice`, etc.). Les filtres exacts (`category`, `isActive`) sont placés dans la clause `filter` (plus performante et cachable), tandis que la recherche plein texte (`q`) est placée dans la clause `must` (qui affecte le score de pertinence).
+
+### **4.7. Service de Commandes (`order-service`)**
+*   **Rôle** : Orchestrer le processus de commande et maintenir un historique immuable des ventes.
+*   **Logique Interne** : La création d'une commande est une opération transactionnelle complexe.
+    1.  Démarre une transaction de base de données (`prisma.$transaction`).
+    2.  Pour chaque article de la commande, envoie une requête HTTP synchrone au `product-service` (`POST /stock/adjust/:variantId`) pour décrémenter le stock. **Si cette étape échoue, la transaction entière est annulée (rollback)**, garantissant qu'aucune commande n'est créée si le stock ne peut être ajusté.
+    3.  Crée l'enregistrement `Order` et les `OrderItem` associés.
+    4.  Valide la transaction.
+    5.  Aucun événement n'est produit par ce service dans la configuration actuelle, mais pourrait l'être (`ORDER_PLACED`) pour notifier d'autres systèmes (facturation, expédition).
 
 ---
+## **5. Flux de Données et Scénarios d'Utilisation**
 
-## **4. Architecture Orientée Événements avec Kafka**
-
-### **4.1. Principe et Avantages**
-L'utilisation de Kafka comme bus d'événements central permet de découpler les services. Lorsqu'un service modifie une donnée importante, il n'a pas besoin de savoir quels autres services dépendent de cette donnée. Il publie simplement un événement. Les services intéressés s'abonnent et réagissent de manière autonome.
-*   **Découplage** : Les producteurs et les consommateurs d'événements sont indépendants.
-*   **Asynchronisme** : Le producteur n'attend pas que les consommateurs traitent l'événement.
-*   **Durabilité** : Les événements sont stockés de manière persistante dans Kafka, ce qui permet aux consommateurs de les traiter même s'ils étaient temporairement indisponibles.
-
-### **4.2. Topics Kafka**
-| Topic | Producteur(s) | Consommateur(s) | Description |
-| :--- | :--- | :--- | :--- |
-| `auth_events` | `auth-service` | `order-service` | Événements liés au cycle de vie des utilisateurs (création, mise à jour, suppression). |
-| `product_events`| `product-service`| `order-service`, `search-service` | Événements liés au catalogue de produits (création, mise à jour, suppression). |
-
-### **4.3. Scénario : Création d'un Produit**
-Ce diagramme de séquence illustre le flux complet lors de la création d'un produit.
-
+### **5.1. Scénario 1 : Enregistrement et Connexion d'un Utilisateur**
 ```mermaid
 sequenceDiagram
     participant Client
     participant API_Gateway
-    participant Product_Service
-    participant Product_DB
-    participant Kafka
-    participant Search_Service
-    participant Order_Service
-    participant Elasticsearch
-    participant Order_DB
+    participant Auth_Service
+    participant Auth_DB
 
-    Client->>API_Gateway: POST /products (avec données produit)
-    API_Gateway->>Product_Service: POST / (transmet les données)
-    Product_Service->>Product_DB: INSERT INTO Product, Variant, etc.
-    Product_DB-->>Product_Service: Succès de l'insertion
-    Product_Service-->>API_Gateway: 201 Created (avec produit complet)
-    API_Gateway-->>Client: 201 Created
-
-    par
-        Product_Service->>Kafka: Produit message { type: 'PRODUCT_CREATED', payload: {...} } sur topic 'product_events'
-    and
-        Kafka-->>Search_Service: Livre le message
-        Search_Service->>Elasticsearch: Indexe le nouveau produit
-    and
-        Kafka-->>Order_Service: Livre le message
-        Order_Service->>Order_DB: INSERT INTO denormalized_products
+    Client->>API_Gateway: POST /auth/login (email, password)
+    API_Gateway->>Auth_Service: POST /login
+    Auth_Service->>Auth_DB: SELECT * FROM User WHERE email = ...
+    Auth_DB-->>Auth_Service: Retourne l'utilisateur (avec mot de passe haché)
+    alt Utilisateur trouvé ET mot de passe valide
+        Auth_Service->>Auth_Service: Compare le mot de passe fourni avec le hash
+        Auth_Service->>Auth_Service: Génère un jeton JWT
+        Auth_Service-->>API_Gateway: 200 OK { token: "..." }
+        API_Gateway-->>Client: 200 OK { token: "..." }
+    else Utilisateur non trouvé OU mot de passe invalide
+        Auth_Service-->>API_Gateway: 401 Unauthorized
+        API_Gateway-->>Client: 401 Unauthorized
     end
 ```
 
+### **5.2. Scénario 2 : Ajout d'un Article au Panier**
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API_Gateway
+    participant Cart_Service
+    participant Redis
+
+    Client->>API_Gateway: POST /carts/:cartId/items (données de l'article)
+    API_Gateway->>Cart_Service: POST /:cartId/items
+    Cart_Service->>Redis: GET cart:cartId
+    Redis-->>Cart_Service: Retourne le panier (JSON) ou null
+    alt Panier trouvé
+        Cart_Service->>Cart_Service: Met à jour l'objet JSON du panier en mémoire
+    else Panier non trouvé
+        Cart_Service->>Cart_Service: Crée un nouvel objet JSON de panier
+    end
+    Cart_Service->>Redis: SET cart:cartId (avec le panier mis à jour et un TTL)
+    Redis-->>Cart_Service: OK
+    Cart_Service-->>API_Gateway: 200 OK (avec le panier complet)
+    API_Gateway-->>Client: 200 OK (avec le panier complet)
+```
+
+### **5.3. Scénario 3 : Création d'un Produit (Flux EDA)**
+Diagramme déjà présenté en section 4.3, illustrant la publication sur Kafka et la consommation par les services `search` et `order`.
+
+### **5.4. Scénario 4 : Passage d'une Commande**
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API_Gateway
+    participant Order_Service
+    participant Product_Service
+    participant Order_DB
+
+    Client->>API_Gateway: POST /orders (données commande)
+    API_Gateway->>Order_Service: POST /
+    Order_Service->>Order_DB: BEGIN TRANSACTION
+    loop Pour chaque article dans la commande
+        Order_Service->>API_Gateway: POST /products/stock/adjust/:variantId (change: -quantity)
+        API_Gateway->>Product_Service: POST /stock/adjust/:variantId
+        Product_Service-->>API_Gateway: 201 OK
+        API_Gateway-->>Order_Service: 201 OK
+    end
+    Order_Service->>Order_DB: INSERT INTO Order, OrderItem
+    Order_DB-->>Order_Service: Succès
+    Order_Service->>Order_DB: COMMIT TRANSACTION
+    Order_Service-->>API_Gateway: 201 Created (données commande)
+    API_Gateway-->>Client: 201 Created
+```
 ---
+## **6. Infrastructure et Déploiement**
 
-## **5. Infrastructure et Déploiement**
+### **6.1. Conteneurisation avec Docker**
+La conteneurisation via Docker isole chaque service, garantissant la cohérence des environnements entre le développement et la production. L'utilisation d'images `alpine` légères et de builds multi-étapes (implicites dans le `Dockerfile` standard) optimise la taille des images.
 
-### **5.1. Conteneurisation avec Docker**
-Chaque microservice est encapsulé dans une image Docker. Le `Dockerfile` de chaque service suit un modèle standard :
-1.  **`FROM node:18-alpine`** : Utilise une image de base Node.js légère.
-2.  **`WORKDIR /app`** : Définit le répertoire de travail.
-3.  **`COPY package*.json ./`** et **`RUN npm install`** : Installe les dépendances en premier pour bénéficier du cache de layers de Docker.
-4.  **`COPY . .`** : Copie le code source de l'application.
-5.  **`RUN npx prisma generate`** : Génère le client Prisma si nécessaire.
-6.  **`EXPOSE <port>`** : Documente le port sur lequel le service écoute.
-7.  **`CMD ["npm", "start"]`** : Définit la commande pour lancer le service.
+### **6.2. Orchestration avec Kubernetes**
+Kubernetes automatise le déploiement, la mise à l'échelle et la gestion des applications conteneurisées.
+*   **Diagramme d'Interaction Pod/Service** :
+    ```mermaid
+    graph TD
+        subgraph "Cluster Kubernetes"
+            subgraph "Node 1"
+                PodA1["Pod <br/> auth-service-xyz"]
+                PodP1["Pod <br/> product-service-abc"]
+            end
+            subgraph "Node 2"
+                PodA2["Pod <br/> auth-service-123"]
+            end
 
-### **5.2. Orchestration Locale avec Docker Compose**
-Le fichier `docker-compose.yml` est utilisé pour lancer l'ensemble de l'écosystème en local pour le développement. Il définit :
-*   Tous les services applicatifs et d'infrastructure.
-*   Les réseaux pour permettre la communication entre conteneurs.
-*   Les volumes pour la persistance des données (bases de données, images, Redis).
-*   Les variables d'environnement nécessaires pour chaque service.
-*   Les dépendances de démarrage (`depends_on`) avec des `healthchecks` pour assurer un ordre de lancement correct.
-*   Le montage de volumes de code source (`develop.watch`) pour le rechargement à chaud (hot-reloading) lors du développement.
+            ServiceAuth[Service: auth-service-svc]
+            ServiceProd[Service: product-service-svc]
+        end
 
-### **5.3. Orchestration de Production avec Kubernetes (Kind)**
-Pour simuler un environnement de production, Kubernetes est utilisé. Kind (Kubernetes in Docker) permet de créer un cluster K8s local.
+        External_Traffic -- "Requête pour auth" --> ServiceAuth
+        Internal_Traffic[product-service-abc] -- "Requête pour auth" --> ServiceAuth
 
-*   **`kind-cluster-config.yaml`** : Configure le cluster Kind, notamment le mappage des ports (`extraPortMappings`) pour exposer les services sur `localhost` à des fins de test et de débogage.
-*   **`kubernetes-manifests.yaml`** : Ce fichier central définit toutes les ressources Kubernetes nécessaires pour déployer l'application.
-    *   **`Deployment`** : Pour chaque service ou base de données, un `Deployment` est créé pour gérer les `Pods` (instances de conteneurs). Il spécifie l'image à utiliser, le nombre de réplicas, les variables d'environnement, et les sondes de santé (`readinessProbe`).
-    *   **`Service`** : Pour chaque `Deployment`, un `Service` est créé pour fournir une adresse IP et un nom DNS stables à l'intérieur du cluster (ex: `auth-db-svc`). Cela permet aux services de communiquer entre eux sans connaître les adresses IP des pods.
-    *   **`NodePort`** : Les services qui doivent être accessibles de l'extérieur du cluster (comme l'API Gateway) utilisent un `Service` de type `NodePort`.
-    *   **`initContainers`** : Les services qui dépendent d'une base de données (`auth-service`, `product-service`, `order-service`) utilisent des `initContainers`. Ce conteneur spécial s'exécute *avant* le conteneur principal de l'application pour effectuer des tâches de configuration, comme attendre que la base de données soit prête et appliquer les migrations de schéma Prisma (`prisma db push`).
+        ServiceAuth -- "Load Balancing" --> PodA1
+        ServiceAuth -- "Load Balancing" --> PodA2
+        ServiceProd --> PodP1
 
----
-
-## **6. Intégration et Déploiement Continus (CI/CD) avec Jenkins**
-
-### **6.1. Présentation du `Jenkinsfile`**
-Le fichier `Jenkinsfile` définit un pipeline déclaratif qui automatise le processus de build, de test et de déploiement de l'ensemble de l'application sur un cluster Kubernetes éphémère.
-
-### **6.2. Étapes du Pipeline**
-
-1.  **`Checkout`** : Récupère la dernière version du code depuis le système de gestion de version.
-2.  **`Build Custom Docker Images`** : Parcourt la liste des services personnalisés et construit une image Docker pour chacun, en la taguant avec un identifiant de build unique (`${env.BUILD_ID}`).
-3.  **`Setup Kind Cluster`** :
-    *   Supprime tout ancien cluster Kind pour garantir un environnement propre.
-    *   Crée un nouveau cluster Kind en utilisant `kind-cluster-config.yaml`.
-    *   Charge les images Docker construites à l'étape précédente et les images publiques (Postgres, Kafka, etc.) dans le cluster Kind.
-4.  **`Deploy Application to Kind`** :
-    *   Remplace les placeholders (`${IMAGE_PREFIX}`, `${IMAGE_TAG}`) dans le fichier `kubernetes-manifests.yaml` avec les valeurs actuelles.
-    *   Applique le manifeste rendu au cluster avec `kubectl apply -f`.
-    *   Attend que tous les `Deployments` soient complètement déployés et prêts (`kubectl rollout status`).
-5.  **`Integration/E2E Tests (Placeholder)`** : Une étape réservée pour exécuter des tests d'intégration de bout en bout contre l'environnement fraîchement déployé.
-6.  **`post`** : Bloc qui s'exécute à la fin du pipeline.
-    *   **`always`** : Nettoie les fichiers de manifeste temporaires.
-    *   **`success` / `failure`** : Affiche des messages de statut finaux.
+    ```
+*   **`initContainers`** : Le `kubernetes-manifests.yaml` utilise des `initContainers` pour gérer les dépendances de démarrage. Par exemple, le pod `product-service` ne démarrera pas son conteneur principal tant que son `initContainer` n'aura pas vérifié que `product-db-svc` est accessible et que `prisma db push` s'est exécuté avec succès. Cela garantit l'intégrité du schéma avant que l'application ne commence à accepter du trafic.
 
 ---
+## **7. Intégration et Déploiement Continus (CI/CD)**
 
-## **7. Services d'Infrastructure Complémentaires**
+### **7.1. Vue d'ensemble du Pipeline Jenkins**
+Le `Jenkinsfile` est le pilier du CI/CD. Il définit un pipeline qui prend le code source comme entrée et produit un environnement de test entièrement déployé comme sortie. L'utilisation de `Kind` dans le pipeline permet de tester les manifestes Kubernetes réels à chaque build, réduisant ainsi l'écart entre le test et la production.
 
-### **7.1. Service Discovery (Consul)**
-Chaque microservice, au démarrage, s'enregistre auprès de l'agent Consul en fournissant son nom, son adresse IP et son port. L'API Gateway et les services internes peuvent ensuite interroger Consul pour obtenir l'adresse actuelle d'un service dont ils ont besoin, ce qui élimine la nécessité de coder en dur les adresses IP.
-
-### **7.2. Bases de Données (PostgreSQL)**
-L'approche "Database per service" est adoptée. `auth-service`, `product-service` et `order-service` ont chacun leur propre base de données PostgreSQL isolée. Cela renforce le découplage et permet à chaque service de faire évoluer son schéma indépendamment des autres.
-
-### **7.3. Système de Cache (Redis)**
-Redis est utilisé par le `cart-service` pour sa performance élevée en lecture/écriture. Les paniers sont stockés sous forme de chaînes JSON avec une durée de vie (TTL) de 7 jours, ce qui permet de purger automatiquement les anciens paniers d'invités.
-
-### **7.4. Moteur de Recherche (Elasticsearch)**
-Elasticsearch est le cœur du `search-service`. Il indexe les données des produits dans une structure optimisée pour la recherche. Le `consumer.js` du `search-service` transforme les événements Kafka en documents Elasticsearch, en les indexant, les mettant à jour ou les supprimant de l'index `products`. Le fichier de configuration `elasticsearch.js` définit le mapping de l'index, qui spécifie le type de chaque champ (`keyword`, `text`, `nested`, etc.) et les analyseurs à utiliser pour la recherche.
+### **7.2. Diagramme du Pipeline**
+```mermaid
+graph LR
+    A[Start] --> B(Checkout);
+    B --> C{Build Custom Images};
+    C --> D(Setup Kind Cluster);
+    D --> E(Load Images into Kind);
+    E --> F(Deploy to Kind);
+    F --> G(Run E2E Tests);
+    G --> H{Post-Build Cleanup};
+    H --> I[End];
+```
 
 ---
+## **8. Conclusion et Perspectives**
+Cette architecture distribuée, basée sur les microservices et les événements, constitue une fondation solide et moderne pour une plateforme e-commerce. Elle est conçue pour la scalabilité, la résilience et la maintenabilité.
 
-## **8. Conclusion**
-
-Ce projet met en œuvre une architecture de backend e-commerce moderne, distribuée et résiliente. En s'appuyant sur des principes solides comme les microservices, l'EDA (Event-Driven Architecture) et le CI/CD, le système est conçu pour être à la fois performant et évolutif. La séparation claire des responsabilités entre les services, combinée à une infrastructure conteneurisée et orchestrée, fournit une base solide pour de futurs développements.
-
-Les prochaines étapes pourraient inclure l'implémentation de la sécurité (OAuth2), l'ajout de monitoring et de logging centralisés (par exemple avec la stack ELK/EFK ou Prometheus/Grafana), et l'optimisation des performances sous forte charge.
+**Améliorations futures possibles** :
+*   **Sécurité Renforcée** : Implémentation de jetons de rafraîchissement (refresh tokens), gestion des scopes OAuth2, et sécurisation des communications inter-services avec mTLS.
+*   **Observabilité** : Intégration d'une stack de monitoring (Prometheus, Grafana) et de logging centralisé (Fluentd, Elasticsearch, Kibana - EFK) pour une meilleure visibilité du système.
+*   **Distributed Tracing** : Utilisation d'outils comme Jaeger ou OpenTelemetry pour tracer les requêtes à travers les différents microservices.
+*   **Tests Automatisés** : Développement de suites de tests unitaires, d'intégration et de bout en bout complètes pour chaque service et pour le pipeline CI/CD.
+*   **Gestion des Défaillances** : Implémentation de patterns de résilience plus avancés comme les Dead-Letter Queues (DLQ) dans Kafka et des disjoncteurs (circuit breakers) pour les appels synchrones.
