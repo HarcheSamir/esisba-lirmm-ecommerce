@@ -351,25 +351,27 @@ Les `Dockerfile` sont optimisés pour réduire la taille des images et les temps
 #### **7.2. Stratégie d'Orchestration (Kubernetes)**
 *   **Diagramme de Déploiement Physique**
     ```mermaid
-    graph TD
-        subgraph "Hardware/VM (Node 1)"
-            Kubelet1["Kubelet"]
-            subgraph "Pods"
-                Pod_Auth["Pod: auth-service-xyz"]
-                Pod_APIGW["Pod: api-gateway-abc"]
-                Pod_Consul["Pod: consul-123"]
-            end
+   graph TD
+    subgraph "Hardware/VM (Node 1)"
+        Kubelet1["Kubelet"]
+        subgraph "Pods"
+            Pod_Auth["Pod: auth-service-xyz"]
+            Pod_APIGW["Pod: api-gateway-abc"]
+            Pod_Consul["Pod: consul-123"]
         end
-        subgraph "Hardware/VM (Node 2)"
-            Kubelet2["Kubelet"]
-            subgraph "Pods"
-                Pod_Prod["Pod: product-service-qwe"]
-                Pod_DB["Pod: product-db-rty"]
-                Pod_Kafka["Pod: kafka-fgh"]
-            end
+    end
+    subgraph "Hardware/VM (Node 2)"
+        Kubelet2["Kubelet"]
+        subgraph "Pods"
+            Pod_Prod["Pod: product-service-qwe"]
+            Pod_DB["Pod: product-db-rty"]
+            Pod_Kafka["Pod: kafka-fgh"]
         end
-        LoadBalancer["Load Balancer Externe"] --> Kubelet1 & Kubelet2
-        Kubelet1 -- "Réseau Overlay CNI" -- Kubelet2
+    end
+    LoadBalancer["Load Balancer Externe"] --> Kubelet1
+    LoadBalancer --> Kubelet2
+    Kubelet1 -.-> Kubelet2
+    Kubelet2 -.-> Kubelet1
     ```
 *   **Sondes de Santé (`Probes`)** :
     *   **`ReadinessProbe`** : Indique si un pod est prêt à accepter du trafic.
