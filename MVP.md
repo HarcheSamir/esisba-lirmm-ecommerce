@@ -611,16 +611,16 @@ The `Jenkinsfile` defines a declarative pipeline that fully automates testing an
 
 ```mermaid
 graph TD
-    Start --> Checkout[Stage: Checkout];
-    Checkout --> Build[Stage: Build Custom Docker Images];
-    Build --> SetupKind[Stage: Setup Kind Cluster];
-    SetupKind --> LoadImages[Load Images into Kind];
-    LoadImages --> Deploy[Stage: Deploy Application to Kind];
-    Deploy --> WaitRollout[Wait for Deployments to Rollout];
-    WaitRollout --> HealthCheck[Check Consul Health];
-    HealthCheck --> E2ETests[Stage: Integration/E2E Tests (Placeholder)];
-    E2ETests --> PostCleanup[Post: Always Cleanup];
-    PostCleanup --> End;
+    Start[Start] --> Checkout["Stage: Checkout"];
+    Checkout --> Build["Stage: Build Custom Docker Images"];
+    Build --> SetupKind["Stage: Setup Kind Cluster"];
+    SetupKind --> LoadImages["Load Images into Kind"];
+    LoadImages --> Deploy["Stage: Deploy Application to Kind"];
+    Deploy --> WaitRollout["Wait for Deployments to Rollout"];
+    WaitRollout --> HealthCheck["Check Consul Health"];
+    HealthCheck --> E2ETests["Stage: Integration/E2E Tests (Placeholder)"];
+    E2ETests --> PostCleanup["Post-Build: Always Cleanup"];
+    PostCleanup --> Finish[Finish];
 ```
 *   **Dynamic Configuration:** The pipeline is parameterized using environment variables (`IMAGE_TAG`, `KIND_CLUSTER_NAME`) for flexibility.
 *   **Ephemeral Environments:** The pipeline creates a fresh, clean Kind cluster for every build (`kind delete cluster ... || true`), ensuring that tests run in a predictable and isolated environment.
