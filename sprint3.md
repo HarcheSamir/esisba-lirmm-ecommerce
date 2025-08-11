@@ -1,11 +1,3 @@
-Vous avez mille fois raison. C'est une erreur inacceptable et une négligence impardonnable de ma part. Je vous présente mes excuses les plus sincères. En me concentrant sur le contenu, j'ai complètement bâclé la syntaxe des diagrammes, ce qui les rend inutilisables.
-
-Il n'y a aucune excuse. Je vais corriger cela immédiatement. Je vais reprendre l'intégralité du document et m'assurer que chaque diagramme Mermaid est syntaxiquement parfait, sans aucun formatage qui pourrait causer des erreurs de rendu, tout en conservant la densité et la profondeur du texte.
-
-Voici le document complet, corrigé et rédigé avec la rigueur que j'aurais dû appliquer dès le départ.
-
----
----
 
 # **Rapport Technique Exhaustif : Conception et Implémentation d'une Infrastructure de Déploiement Industrialisée pour une Plateforme Microservices sur Kubernetes**
 
@@ -114,11 +106,11 @@ graph LR
         CurrentState{"Etat Actuel du Cluster"}
     end
 
-    YAML -- "1. kubectl apply" --> APIServer
-    APIServer -- "2. Stocke dans etcd" --> ETCD
-    ControllerManager -- "3. Observe les changements" --> APIServer
-    ControllerManager -- "4. Detecte la difference avec" --> CurrentState
-    ControllerManager -- "5. Agit pour reconcilier" --> CurrentState
+    YAML -- "kubectl apply" --> APIServer
+    APIServer -- "Stocke dans etcd" --> ETCD
+    ControllerManager -- "Observe les changements" --> APIServer
+    ControllerManager -- "Detecte la difference avec" --> CurrentState
+    ControllerManager -- "Agit pour reconcilier" --> CurrentState
 ```
 ***Figure 2.1 : La boucle de réconciliation de `Kubernetes`, cœur du modèle déclaratif.***
 
@@ -274,10 +266,9 @@ graph TD
         Prometheus["Prometheus Server"]
     end
 
-    Prometheus -- "1. Scrape (Pull)" --> ProxyA
-    Prometheus -- "2. Scrape (Pull)" --> ProxyB
-```
-***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
+    Prometheus -- "Scrape (Pull)" --> ProxyA
+    Prometheus -- "Scrape (Pull)" --> ProxyB
+```***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
 
 #### **2.4.2. `Grafana` : La Visualisation par Tableaux de Bord**
 
@@ -311,11 +302,11 @@ graph LR
         K8s_API["Kubernetes API Server"]
     end
 
-    Proxies -- "1. Expose Metrics" --> Prometheus
-    Prometheus -- "2. Scrapes" --> Proxies
-    Grafana -- "3. Queries PromQL" --> Prometheus
-    Kiali -- "4. Queries PromQL" --> Prometheus
-    Kiali -- "5. Queries Cluster State" --> K8s_API
+    Proxies -- "Expose Metrics" --> Prometheus
+    Prometheus -- "Scrapes" --> Proxies
+    Grafana -- "Queries PromQL" --> Prometheus
+    Kiali -- "Queries PromQL" --> Prometheus
+    Kiali -- "Queries Cluster State" --> K8s_API
     Istiod -- "Pushes Config" --> Proxies
     Kiali -- "Reads Istio Config" --> K8s_API
 ```
@@ -436,19 +427,19 @@ sequenceDiagram
     participant RS_Old as ReplicaSet (v1)
     participant RS_New as ReplicaSet (v2)
 
-    Jenkins->>K8s: 1. kubectl rollout restart
-    K8s->>RS_Old: 2. Scale down
-    K8s->>+RS_New: 3. Cree nouveau ReplicaSet
-    RS_New->>K8s: 4. Cree nouveau Pod
+    Jenkins->>+K8s: kubectl rollout restart
+    K8s->>RS_Old: Initiate scale down
+    K8s->>+RS_New: Create new ReplicaSet
+    RS_New->>K8s: Create new Pods
     Note right of RS_New: Le nouveau Pod tire la nouvelle image Docker
-    RS_Old->>K8s: 5. Supprime ancien Pod
-    loop Jusqu'a remplacement complet
+    RS_Old->>K8s: Delete old Pods
+    loop Jusqu a remplacement complet
         RS_New->>K8s: Cree Pod
         RS_Old->>K8s: Supprime Pod
     end
-    K8s-->>-RS_New: Deploiement termine
+    deactivate RS_New
+    K8s-->>-Jenkins: Deploiement termine
 ```
-
 ***Figure 5.2 : Diagramme de séquence d'un `rolling update` initié par `rollout restart`.***
 
 #### **5.2.5. Le `post` Block : Garantir la Visibilité en cas d'Échec**
@@ -482,13 +473,13 @@ Un nouveau microservice, le `AI_Controller`, sera développé. Ce service implé
 ```mermaid
 graph TD
     subgraph "Boucle de Controle IA"
-        Prometheus["Prometheus Server"] -- "1. Metriques via PromQL" --> AI_Controller["Controleur IA"];
-        AI_Controller -- "2. Decision (poids)" --> K8s_API["API Kubernetes"];
-        K8s_API -- "3. Met a jour la ressource Istio" --> VS["VirtualService"];
+        Prometheus["Prometheus Server"] -- "Metriques via PromQL" --> AI_Controller["Controleur IA"];
+        AI_Controller -- "Decision (poids)" --> K8s_API["API Kubernetes"];
+        K8s_API -- "Met a jour la ressource Istio" --> VS["VirtualService"];
     end
     subgraph "Data Plane"
-        VS -- "4. Repartit le trafic" --> ServicePods["Pods applicatifs"];
+        VS -- "Repartit le trafic" --> ServicePods["Pods applicatifs"];
     end
-    ServicePods -- "5. Generent de nouvelles metriques" --> Prometheus;
+    ServicePods -- "Generent de nouvelles metriques" --> Prometheus;
 ```
 ***Figure 6.1 : Architecture cible pour l'équilibrage de charge piloté par l'IA.***
