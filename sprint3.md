@@ -1,5 +1,4 @@
 
-
 # **Rapport Technique Exhaustif : Conception et Implémentation d'une Infrastructure de Déploiement Industrialisée pour une Plateforme Microservices sur Kubernetes**
 
 **Sous-titre :** Une Fondation pour le Déploiement Continu, l'Observabilité et la Recherche en IA sur le `Service Mesh`
@@ -272,8 +271,7 @@ graph TD
 
     Prometheus -- "1. Scrape (Pull)" --> ProxyA
     Prometheus -- "2. Scrape (Pull)" --> ProxyB
-```
-***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
+```***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
 
 #### **2.4.2. `Grafana` : La Visualisation par Tableaux de Bord**
 
