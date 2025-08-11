@@ -223,21 +223,21 @@ Lorsque `istio-injection=enabled` est actif sur un `namespace`, le `Control Plan
 
 ```mermaid
 graph TD
-    subgraph "Pod: `stats-service-xxxx`"
+    subgraph "Pod: stats-service-xxxx"
         direction LR
-        subgraph "`spec.initContainers`"
+        subgraph "spec.initContainers"
             Init1[istio-init]
         end
-        subgraph "`spec.containers`"
-            App[stats-service (notre code)]
-            Proxy[istio-proxy (injecté)]
+        subgraph "spec.containers"
+            App[stats-service notre code]
+            Proxy[istio-proxy injecté]
         end
     end
     
-    TraficTCP[Tout le trafic TCP] --> Init1;
-    Init1 -- "Configure iptables" --> Proxy;
-    Proxy -- "Contrôle, sécurise, observe" --> App;
-    App -- "Communique 'normalement'" --> Proxy;
+    TraficTCP[Tout le trafic TCP] --> Init1
+    Init1 -- "Configure iptables" --> Proxy
+    Proxy -- "Contrôle, sécurise, observe" --> App
+    App -- "Communique 'normalement'" --> Proxy
 ```
 ***Figure 2.3 : Le `Pod` après mutation par `Istio`, montrant le rôle du `initContainer` et du `sidecar`.***
 
