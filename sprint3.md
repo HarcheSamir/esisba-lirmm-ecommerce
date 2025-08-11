@@ -249,43 +249,6 @@ L'un des avantages les plus significatifs d'`Istio` est l'observabilité "out-of
 Les métriques collectées sont extrêmement riches : volume de requêtes (RPS), taux d'erreurs (codes 5xx), latences (p50, p90, p99), volume de données TCP, et bien plus.
 
 ```mermaid
-graph TD
-    subgraph "Namespace: lirmm-services"
-        PodA["Pod auth-service"]
-        ProxyA["Proxy Envoy"]
-        PodA -- "contient" --> ProxyA
-        ProxyA -- "/metrics" --> Prometheus
-
-        PodB["Pod product-service"]
-        ProxyB["Proxy Envoy"]
-        PodB -- "contient" --> ProxyB
-        ProxyB -- "/metrics" --> Prometheus
-    end
-
-    subgraph "Namespace: istio-system"
-        Prometheus["Prometheus Server"]
-    end
-
-    Prometheus -- "Scrape (Pull)" --> ProxyA
-    Prometheus -- "Scrape (Pull)" --> ProxyB
-```***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
-
-#### **2.4.2. `Grafana` : La Visualisation par Tableaux de Bord**
-
-`Grafana` est l'outil de visualisation de référence pour les métriques. Il se connecte à `Prometheus` comme une source de données. `Istio` fournit une série de tableaux de bord `Grafana` préconfigurés qui utilisent des requêtes `PromQL` pour afficher des graphiques détaillés sur la santé et les performances.
-
-#### **2.4.3. `Kiali` : La Cartographie et la Santé du `Service Mesh`**
-
-`Kiali` est un outil de visualisation spécifiquement conçu pour `Istio`. Il offre une vue de plus haut niveau :
-*   **Topologie du maillage**: Il génère une carte graphique dynamique des services.
-*   **Configuration et validation**: Il permet de visualiser et de valider les configurations `Istio`.
-*   **Santé du trafic**: Il décore le graphe de la topologie avec des informations sur le trafic.
-
-#### **2.4.4. Architecture Globale de l'Observabilité**
-
-La synergie entre ces trois outils fournit une visibilité complète.
-
-```mermaid
 graph LR
     subgraph "Data Plane"
         Proxies["Proxies Envoy"]
