@@ -1,3 +1,11 @@
+Vous avez mille fois raison. C'est une erreur inacceptable et une négligence impardonnable de ma part. Je vous présente mes excuses les plus sincères. En me concentrant sur le contenu, j'ai complètement bâclé la syntaxe des diagrammes, ce qui les rend inutilisables.
+
+Il n'y a aucune excuse. Je vais corriger cela immédiatement. Je vais reprendre l'intégralité du document et m'assurer que chaque diagramme Mermaid est syntaxiquement parfait, sans aucun formatage qui pourrait causer des erreurs de rendu, tout en conservant la densité et la profondeur du texte.
+
+Voici le document complet, corrigé et rédigé avec la rigueur que j'aurais dû appliquer dès le départ.
+
+---
+---
 
 # **Rapport Technique Exhaustif : Conception et Implémentation d'une Infrastructure de Déploiement Industrialisée pour une Plateforme Microservices sur Kubernetes**
 
@@ -39,22 +47,19 @@ Le "Outer Loop" commence lorsqu'une fonctionnalité est considérée comme stabl
 
 ```mermaid
 graph TD
-    subgraph "Environnement Développeur (Inner Loop)"
-        A[Coder dans l'IDE]
-        B{Lancer via `dev.sh` / `docker-compose`}
-        C[Tester localement]
-        D{Modifier le code}
-        A --> B --> C --> D --> A
+    subgraph "Environnement Developpeur (Inner Loop)"
+        A["Coder dans l'IDE"] --> B["Lancer via `dev.sh` / `docker-compose`"];
+        B --> C["Tester localement"];
+        C --> D["Modifier le code"];
+        D --> A;
     end
 
-    subgraph "Environnement de Déploiement (Outer Loop)"
-        E[Push sur Git]
-        F{Déclenchement du Pipeline Jenkins}
-        G[Build des images Docker]
-        H[Déploiement sur le Cluster Kubernetes (Kind)]
-        I[Tests d'Intégration / E2E]
-        J[Déploiement en Production (simulé)]
-        E --> F --> G --> H --> I --> J
+    subgraph "Environnement de Deploiement (Outer Loop)"
+        E["Push sur Git"] --> F["Declenchement du Pipeline Jenkins"];
+        F --> G["Build des images Docker"];
+        G --> H["Deploiement sur le Cluster Kubernetes (Kind)"];
+        H --> I["Tests d'Integration / E2E"];
+        I --> J["Deploiement en Production (simule)"];
     end
 ```
 ***Figure 1.1 : Distinction entre le cycle de développement rapide ("Inner Loop") et le cycle de déploiement industrialisé ("Outer Loop").***
@@ -95,25 +100,25 @@ Le `Control Plane` de `Kubernetes`, via ses différents contrôleurs (`Deploymen
 ```mermaid
 graph LR
     subgraph "Utilisateur / CI/CD"
-        YAML[Manifeste YAML]
+        YAML["Manifeste YAML"]
     end
     
     subgraph "Kubernetes Control Plane"
-        APIServer[API Server]
-        ControllerManager[Controller Manager]
-        Scheduler[Scheduler]
-        ETCD[etcd]
+        APIServer["API Server"]
+        ControllerManager["Controller Manager"]
+        Scheduler["Scheduler"]
+        ETCD["etcd"]
     end
 
     subgraph "Cluster State"
-        CurrentState{État Actuel du Cluster}
+        CurrentState{"Etat Actuel du Cluster"}
     end
 
     YAML -- "1. kubectl apply" --> APIServer
-    APIServer -- "2. Stocke dans" --> ETCD
+    APIServer -- "2. Stocke dans etcd" --> ETCD
     ControllerManager -- "3. Observe les changements" --> APIServer
-    ControllerManager -- "4. Détecte la différence avec" --> CurrentState
-    ControllerManager -- "5. Agit pour réconcilier" --> CurrentState
+    ControllerManager -- "4. Detecte la difference avec" --> CurrentState
+    ControllerManager -- "5. Agit pour reconcilier" --> CurrentState
 ```
 ***Figure 2.1 : La boucle de réconciliation de `Kubernetes`, cœur du modèle déclaratif.***
 
@@ -154,21 +159,21 @@ Cette configuration est ce qui permet d'accéder à l'application depuis un navi
 
 ```mermaid
 graph TD
-    subgraph "Machine Hôte"
-        localhost[localhost:13000]
+    subgraph "Machine Hote"
+        localhost["localhost:13000"]
     end
 
-    subgraph "Conteneur Docker (Nœud Kind)"
-        Node[Docker Container]
-        NodePort[Port 30000 sur le Node]
+    subgraph "Conteneur Docker (Noeud Kind)"
+        Node["Docker Container"]
+        NodePort["Port 30000 sur le Node"]
     end
     
-    subgraph "Intérieur du Cluster Kubernetes"
-        K8sService[Service istio-ingressgateway]
+    subgraph "Interieur du Cluster Kubernetes"
+        K8sService["Service istio-ingressgateway"]
     end
 
     localhost -- "Mapping Docker -p 13000:30000" --> Node
-    Node -- "Accède au" --> NodePort
+    Node -- "Accede au" --> NodePort
     K8sService -- "Expose sur le" --> NodePort
 ```
 ***Figure 2.2 : Visualisation du `Port Mapping` de `Kind` pour exposer le `Service Mesh`.***
@@ -188,26 +193,26 @@ graph TD
 ```mermaid
 graph TD
     subgraph "Control Plane (istiod)"
-        Istiod[istiod]
-        K8sAPI[Kubernetes API Server]
+        Istiod["istiod"]
+        K8sAPI["Kubernetes API Server"]
     end
     
     subgraph "Data Plane"
         subgraph "Pod A"
-            AppA[Application A]
-            ProxyA[Envoy Proxy A]
+            AppA["Application A"]
+            ProxyA["Envoy Proxy A"]
         end
         subgraph "Pod B"
-            AppB[Application B]
-            ProxyB[Envoy Proxy B]
+            AppB["Application B"]
+            ProxyB["Envoy Proxy B"]
         end
     end
 
-    K8sAPI -- "Lit les CRDs (VirtualService, etc.)" --> Istiod
+    K8sAPI -- "Lit les CRDs" --> Istiod
     Istiod -- "Pousse la configuration" --> ProxyA
     Istiod -- "Pousse la configuration" --> ProxyB
     AppA -- "Trafic" --> ProxyA
-    ProxyA -- "Trafic contrôlé" --> ProxyB
+    ProxyA -- "Trafic controle" --> ProxyB
     ProxyB -- "Trafic" --> AppB
 ```
 ***Figure 2.3 : Interaction entre le `Control Plane` (istiod) et le `Data Plane` (proxies Envoy).***
@@ -223,17 +228,17 @@ graph TD
     subgraph "Pod: `stats-service-xxxx`"
         direction LR
         subgraph "`spec.initContainers`"
-            Init1[istio-init]
+            Init1["istio-init"]
         end
         subgraph "`spec.containers`"
-            App[stats-service (notre code)]
-            Proxy[istio-proxy (injecté)]
+            App["stats-service (notre code)"]
+            Proxy["istio-proxy (injecte)"]
         end
     end
     
-    TraficTCP[Tout le trafic TCP] --> Init1;
-    Init1 -- "Configure les règles iptables pour rediriger tout le trafic vers Envoy" --> Proxy;
-    Proxy -- "Contrôle, sécurise, observe" --> App;
+    TraficTCP["Tout le trafic TCP"] --> Init1;
+    Init1 -- "Configure les regles iptables" --> Proxy;
+    Proxy -- "Controle, securise, observe" --> App;
     App -- "Communique 'normalement'" --> Proxy;
 ```
 ***Figure 2.4 : Le `Pod` après mutation par `Istio`, montrant le rôle du `initContainer` et du `sidecar`.***
@@ -254,24 +259,25 @@ Les métriques collectées sont extrêmement riches : volume de requêtes (RPS),
 ```mermaid
 graph TD
     subgraph "Namespace: lirmm-services"
-        PodA[Pod auth-service]
-        ProxyA[Proxy Envoy]
-        PodA -- contient --> ProxyA
+        PodA["Pod auth-service"]
+        ProxyA["Proxy Envoy"]
+        PodA -- "contient" --> ProxyA
         ProxyA -- "/metrics" --> Prometheus
 
-        PodB[Pod product-service]
-        ProxyB[Proxy Envoy]
-        PodB -- contient --> ProxyB
+        PodB["Pod product-service"]
+        ProxyB["Proxy Envoy"]
+        PodB -- "contient" --> ProxyB
         ProxyB -- "/metrics" --> Prometheus
     end
 
     subgraph "Namespace: istio-system"
-        Prometheus[Prometheus Server]
+        Prometheus["Prometheus Server"]
     end
 
     Prometheus -- "1. Scrape (Pull)" --> ProxyA
     Prometheus -- "2. Scrape (Pull)" --> ProxyB
-```***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
+```
+***Figure 2.5 : Le modèle de collecte de métriques `pull-based` de `Prometheus`.***
 
 #### **2.4.2. `Grafana` : La Visualisation par Tableaux de Bord**
 
@@ -291,18 +297,18 @@ La synergie entre ces trois outils fournit une visibilité complète.
 ```mermaid
 graph LR
     subgraph "Data Plane"
-        Proxies[Proxies Envoy]
+        Proxies["Proxies Envoy"]
     end
 
     subgraph "Monitoring & Visualization Plane"
-        Prometheus[Prometheus Server]
-        Grafana[Grafana]
-        Kiali[Kiali]
+        Prometheus["Prometheus Server"]
+        Grafana["Grafana"]
+        Kiali["Kiali"]
     end
 
     subgraph "Control Plane & Cluster State"
-        Istiod[Istiod Control Plane]
-        K8s_API[Kubernetes API Server]
+        Istiod["Istiod Control Plane"]
+        K8s_API["Kubernetes API Server"]
     end
 
     Proxies -- "1. Expose Metrics" --> Prometheus
@@ -372,17 +378,17 @@ L'installation des `addons` est une étape fondamentale car elle dote le cluster
 
 ```mermaid
 graph TD
-    subgraph "Exécution de ./setup-kind.sh"
-        A[Start] --> B{Supprimer Cluster Existant ?};
-        B --> C[Créer Nouveau Cluster Kind];
-        C --> D{Installer Istio Core};
-        D --> E[Patch Service Gateway];
-        E --> F{Installer Addons};
-        F -- kubectl apply -f samples/addons --> F1[Déploie Prometheus];
-        F -- kubectl apply -f samples/addons --> F2[Déploie Grafana];
-        F -- kubectl apply -f samples/addons --> F3[Déploie Kiali];
-        F --> G{Créer et Labelliser Namespace};
-        G --> H[End];
+    subgraph "Execution de ./setup-kind.sh"
+        A["Start"] --> B{"Supprimer Cluster Existant ?"};
+        B --> C["Creer Nouveau Cluster Kind"];
+        C --> D{"Installer Istio Core"};
+        D --> E["Patch Service Gateway"];
+        E --> F{"Installer Addons"};
+        F -- "kubectl apply -f" --> F1["Deploie Prometheus"];
+        F -- "kubectl apply -f" --> F2["Deploie Grafana"];
+        F -- "kubectl apply -f" --> F3["Deploie Kiali"];
+        F --> G{"Creer et Labelliser Namespace"};
+        G --> H["End"];
     end
 ```
 ***Figure 5.1 : Flux d'exécution détaillé du script de provisioning `setup-kind.sh`.***
@@ -430,18 +436,19 @@ sequenceDiagram
     participant RS_Old as ReplicaSet (v1)
     participant RS_New as ReplicaSet (v2)
 
-    Jenkins->>K8s: 1. kubectl rollout restart deployment/payment-service
-    K8s->>RS_Old: 2. Met à l'échelle à 0 (progressivement)
-    K8s->>+RS_New: 3. Crée un nouveau ReplicaSet (v2) avec le même template de Pod
-    RS_New->>K8s: 4. Crée un nouveau Pod (P_new1)
-    Note right of RS_New: Le nouveau Pod tire la nouvelle image Docker :latest
-    RS_Old->>K8s: 5. Supprime un ancien Pod (P_old1)
-    loop Jusqu'à ce que toutes les répliques soient remplacées
-        RS_New->>K8s: Crée Pod (P_new2)
-        RS_Old->>K8s: Supprime Pod (P_old2)
+    Jenkins->>K8s: 1. kubectl rollout restart
+    K8s->>RS_Old: 2. Scale down
+    K8s->>+RS_New: 3. Cree nouveau ReplicaSet
+    RS_New->>K8s: 4. Cree nouveau Pod
+    Note right of RS_New: Le nouveau Pod tire la nouvelle image Docker
+    RS_Old->>K8s: 5. Supprime ancien Pod
+    loop Jusqu'a remplacement complet
+        RS_New->>K8s: Cree Pod
+        RS_Old->>K8s: Supprime Pod
     end
-    K8s-->>-RS_New: Déploiement terminé
+    K8s-->>-RS_New: Deploiement termine
 ```
+
 ***Figure 5.2 : Diagramme de séquence d'un `rolling update` initié par `rollout restart`.***
 
 #### **5.2.5. Le `post` Block : Garantir la Visibilité en cas d'Échec**
@@ -474,14 +481,14 @@ Un nouveau microservice, le `AI_Controller`, sera développé. Ce service implé
 
 ```mermaid
 graph TD
-    subgraph "Boucle de Contrôle IA"
-        Prometheus[Prometheus Server] -- "1. Métriques via PromQL" --> AI_Controller[Contrôleur IA];
-        AI_Controller -- "2. Décision (poids)" --> K8s_API[API Kubernetes];
-        K8s_API -- "3. Met à jour la ressource Istio" --> VS[VirtualService];
+    subgraph "Boucle de Controle IA"
+        Prometheus["Prometheus Server"] -- "1. Metriques via PromQL" --> AI_Controller["Controleur IA"];
+        AI_Controller -- "2. Decision (poids)" --> K8s_API["API Kubernetes"];
+        K8s_API -- "3. Met a jour la ressource Istio" --> VS["VirtualService"];
     end
     subgraph "Data Plane"
-        VS -- "4. Répartit le trafic" --> ServicePods[Pods applicatifs];
+        VS -- "4. Repartit le trafic" --> ServicePods["Pods applicatifs"];
     end
-    ServicePods -- "5. Génèrent de nouvelles métriques" --> Prometheus;
+    ServicePods -- "5. Generent de nouvelles metriques" --> Prometheus;
 ```
 ***Figure 6.1 : Architecture cible pour l'équilibrage de charge piloté par l'IA.***
