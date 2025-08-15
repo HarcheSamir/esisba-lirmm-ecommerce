@@ -1,0 +1,104 @@
+
+### **1. Decoupled Presentation Layer for Dynamic Localization**
+
+The primary strategy is to make the frontend responsible for all aspects of localization, including language, regional formatting, and layout direction. This creates a clean separation of concerns where the backend provides raw, locale-agnostic data.
+
+*   **Language & Text:** UI text will be externalized from the code. The frontend will dynamically fetch translation files (e.g., JSON) based on the user's selected language (`en`, `fr`, `ar`) and use abstract keys to render text. This approach is a foundational principle of building world-ready applications. [Source: W3C Internationalization (I18n) Activity](https://www.w3.org/International/).
+
+*   **Currency & Formatting:** Backend services will communicate monetary values and numbers in a standard, culture-neutral format (e.g., `{ "price": 1299.99, "currency": "USD" }`). The frontend will then use the browser's native **Internationalization API (`Intl`)** to format these values. This API provides locale-aware functions for currency, numbers, and dates, ensuring they are displayed correctly according to the user's regional conventions (e.g., `€1.299,99` vs. `$1,299.99`). [Source: MDN Web Docs: Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl).
+
+*   **Layout Direction (RTL/LTR):** To support Right-to-Left languages like Arabic, the frontend will toggle the `dir="rtl"` attribute on the root HTML element. Modern web design practice dictates using **CSS Logical Properties** (e.g., `margin-inline-start` instead of `margin-left`), which allows the browser to automatically adapt the layout, reflowing components correctly without requiring separate RTL-specific stylesheets. [Source: MDN Web Docs: CSS Logical Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Logical_Properties).
+
+***
+
+**Diagram 1: Language & Layout Switching Sequence**
+This diagram shows how the frontend dynamically adapts both language and layout.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant FrontendApp as React App
+    participant TranslationServer as Static File Server
+
+    User->>FrontendApp: Selects 'العربية' (Arabic)
+    FrontendApp->>TranslationServer: GET /locales/ar/translation.json
+    TranslationServer-->>FrontendApp: Returns Arabic JSON file
+    FrontendApp->>FrontendApp: 1. Updates state with new translations
+    FrontendApp->>FrontendApp: 2. Sets HTML attribute dir="rtl"
+    FrontendApp-->>User: Renders UI in Arabic with RTL layout
+```
+
+### **2. A Centralized, Multilingual Content Model**
+
+The backend architecture must be adapted to treat multilingual content as a first-class citizen within the data model. This ensures scalability and data integrity.
+
+*   **Database Schema:** Translatable content fields like product `name` and `description` will be moved into a separate `ProductTranslation` table. This table will have a one-to-many relationship with the main `Product` table and will include a `languageCode` column, creating a unique entry for each product-language combination. This is a widely adopted and robust pattern for database internationalization. [Source: A Pragmatic Guide to Database Internationalization](https://www.launchdarkly.com/blog/a-pragmatic-guide-to-database-internationalization-i18n/).
+
+*   **API Data Retrieval:** The product-service API will become language-aware through **content negotiation**. The client will send an `Accept-Language` header (e.g., `fr`) with its requests. The backend will use this header to perform a database `JOIN` with the translation table, retrieving the product's base data along with the specific French content. A fallback to a default language will be implemented if the requested translation is unavailable. [Source: MDN Web Docs: Accept-Language Header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language).
+
+***
+
+**Diagram 2: Entity-Relationship Diagram for Product Translations**
+This illustrates the normalized schema for storing multilingual product information.
+
+```mermaid
+erDiagram
+    PRODUCT ||--o{ PRODUCT_TRANSLATION : "has"
+    PRODUCT {
+        string id PK
+        string sku
+        boolean isActive
+    }
+    PRODUCT_TRANSLATION {
+        string id PK
+        string productId FK
+        string languageCode "en, fr, ar"
+        string name "Translated Name"
+        string description "Translated Description"
+    }
+```
+
+**Diagram 3: Language-Aware Data Request Flow**
+This flow shows how the `Accept-Language` header influences the data returned by the API.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant APIGateway as API Gateway
+    participant ProductService as Product Service
+    participant Database
+
+    Client->>APIGateway: GET /products (Header: Accept-Language: fr)
+    APIGateway->>ProductService: Forwards Request
+    ProductService->>Database: Query product JOIN translation WHERE lang='fr'
+    Database-->>ProductService: Returns products with French content
+    ProductService-->>APIGateway: Responds with translated data
+    APIGateway-->>Client: 200 OK
+```
+
+### **3. Language-Agnostic Service Communication**
+
+To maintain a decoupled microservices architecture, all inter-service communication—both synchronous and asynchronous—must be language-agnostic.
+
+*   **API Error Messages:** Backend services will not return human-readable error messages in their API responses. Instead, they will return stable **error keys** (e.g., `{"messageKey": "error.sku.alreadyExists"}`). It is the frontend's responsibility to map these keys to the appropriate translated string from its local translation files. This makes the APIs reusable across different localized clients. [Source: Microsoft REST API Guidelines on Localization](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#15-globalization).
+
+*   **Event-Driven Notifications:** For asynchronous operations, such as sending emails via Kafka, the service that originates the request must include the user's preferred locale in the event payload. For example, the `auth-service` will publish a `USER_INVITED` event containing `{ "locale": "fr", ... }`. The `notification-service`, upon consuming this message, will use the `locale` field to select and render the correct localized email template, ensuring the user receives communication in their chosen language. [Source: W3C Personalization Semantics](https://www.w3.org/TR/personalization-semantics-1.0/).
+
+***
+
+**Diagram 4: Asynchronous Notification Flow**
+This sequence shows how user language preference is passed through an event-driven system.
+
+```mermaid
+sequenceDiagram
+    participant AdminUI as Frontend
+    participant AuthService as Auth Service
+    participant Kafka
+    participant NotificationService as Notification Service
+    participant NewUser as User
+
+    AdminUI->>AuthService: POST /users/invite (payload includes locale: 'fr')
+    AuthService->>Kafka: Publishes 'USER_INVITED' event (payload includes token, locale: 'fr')
+    Kafka-->>NotificationService: Consumes event
+    NotificationService->>NotificationService: Reads locale 'fr', loads French email template
+    NotificationService->>NewUser: Sends invitation email in French```
