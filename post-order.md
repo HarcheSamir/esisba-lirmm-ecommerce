@@ -93,7 +93,8 @@ graph TD
     B -- Oui --> C["Modification impossible.<br>L'utilisateur est invité à procéder<br>à un retour après réception."];
     B -- Non --> D["L'utilisateur est guidé vers<br>l'annulation de sa commande actuelle"];
     D --> E["Le système traite l'annulation<br>(remboursement et remise en stock)"];
-    E --> F["L'utilisateur est invité à créer<br>un nouveau panier et à passer<br>une nouvelle commande corrigée"];```
+    E --> F["L'utilisateur est invité à créer<br>un nouveau panier et à passer<br>une nouvelle commande corrigée"];
+```
 
 ---
 
