@@ -41,9 +41,9 @@ erDiagram
         string permissionId FK
     }
 
-    User }|--|| Role : "est assigné à"
-    Role ||--|{ RolePermission : "possède"
-    Permission ||--|{ RolePermission : "appartient à"
+    User }|--|| Role : "is assigned"
+    Role ||--|{ RolePermission : "has"
+    Permission ||--|{ RolePermission : "belongs to"
 ```
 
 **Détail du Modèle :**
@@ -65,20 +65,20 @@ Ce diagramme montre le processus de bout en bout, du clic initial de l'administr
 
 ```mermaid
 sequenceDiagram
-    acteur Admin
+    actor Admin
     participant API Gateway
     participant Auth Service
     participant Kafka Broker
     participant Notification Service
-    acteur Nouvel Utilisateur
+    actor New User
 
     Admin->>API Gateway: POST /users/invite (name, email, roleId)
     API Gateway->>Auth Service: FORWARD request
 
     activate Auth Service
-    Note over Auth Service: 1. Vérifier les permissions de l'admin (write:user).
+    Note over Auth Service: 1. Verify admin permissions (write:user).
     Auth Service->>Auth DB: INSERT INTO User (isActive: false, password: null)
-    Note over Auth Service: 2. Générer et stocker un invitationToken unique.
+    Note over Auth Service: 2. Generate and store unique invitationToken.
     Auth Service->>Kafka Broker: PRODUCE event to 'auth_events' topic (type: USER_INVITED)
     Auth Service-->>API Gateway: 201 Created
     API Gateway-->>Admin: 201 Created
@@ -87,22 +87,22 @@ sequenceDiagram
     Kafka Broker-->>Notification Service: DELIVER USER_INVITED event
 
     activate Notification Service
-    Note over Notification Service: 3. Analyser le payload de l'événement (email, token).
+    Note over Notification Service: 3. Parse event payload (email, token).
     Notification Service->>SMTP Server (Gmail): SEND invitation email
     deactivate Notification Service
 
-    Nouvel Utilisateur->>Client Email: Ouvre l'email, clique sur le lien d'invitation
-    Nouvel Utilisateur->>API Gateway: POST /auth/complete-invitation (token, password)
+    New User->>Email Client: Opens email, clicks invitation link
+    New User->>API Gateway: POST /auth/complete-invitation (token, password)
     API Gateway->>Auth Service: FORWARD request
 
     activate Auth Service
-    Note over Auth Service: 4. Trouver l'utilisateur par son invitationToken unique.
+    Note over Auth Service: 4. Find user by unique invitationToken.
     Auth Service->>Auth DB: SELECT * FROM User WHERE invitationToken = ?
-    Note over Auth Service: 5. Hacher le nouveau mot de passe.
+    Note over Auth Service: 5. Hash new password.
     Auth Service->>Auth DB: UPDATE User SET password=?, isActive=true, invitationToken=null
-    Note over Auth Service: 6. Générer un nouveau JWT pour l'utilisateur.
+    Note over Auth Service: 6. Generate new JWT for the user.
     Auth Service-->>API Gateway: 200 OK (with JWT)
-    API Gateway-->>Nouvel Utilisateur: 200 OK (with JWT)
+    API Gateway-->>New User: 200 OK (with JWT)
     deactivate Auth Service
 ```
 
@@ -118,22 +118,22 @@ Lorsqu'un utilisateur se connecte, le `auth-service` interroge la base de donné
 
 ```mermaid
 sequenceDiagram
-    acteur Utilisateur
+    actor User
     participant API Gateway
     participant Auth Service
     participant Auth DB
 
-    Utilisateur->>API Gateway: POST /login (email, password)
+    User->>API Gateway: POST /login (email, password)
     API Gateway->>Auth Service: FORWARD request
 
     activate Auth Service
     Auth Service->>Auth DB: SELECT * FROM User WHERE email = ?
-    Note over Auth Service: 1. Vérifier le hash du mot de passe avec bcrypt.
+    Note over Auth Service: 1. Verify password hash with bcrypt.
     Auth Service->>Auth DB: SELECT p.name FROM Permission p JOIN RolePermission rp ON p.id = rp.permissionId WHERE rp.roleId = ?
-    Note over Auth Service: 2. Collecter toutes les chaînes de permission pour le rôle de l'utilisateur.
-    Note over Auth Service: 3. Créer le payload du JWT : { id, name, email, role, permissions: ['read:product', ...] }
+    Note over Auth Service: 2. Collect all permission strings for the user's role.
+    Note over Auth Service: 3. Create JWT payload: { id, name, email, role, permissions: ['read:product', ...] }
     Auth Service-->>API Gateway: 200 OK (with JWT)
-    API Gateway-->>Utilisateur: 200 OK (with JWT)
+    API Gateway-->>User: 200 OK (with JWT)
     deactivate Auth Service
 ```
 
@@ -143,26 +143,26 @@ Lorsque le frontend effectue une requête vers une page protégée, il inclut le
 
 ```mermaid
 sequenceDiagram
-    acteur Utilisateur
-    participant App Frontend
+    actor User
+    participant Frontend App
     participant API Gateway
-    participant Service Protégé
+    participant Protected Service
 
-    Utilisateur->>App Frontend: Clique sur le lien "Produits"
+    User->>Frontend App: Clicks on "Products" link
     
-    activate App Frontend
-    Note over App Frontend: 1. Vérification barre latérale : hasPermission('read:product') ? -> OUI
-    App Frontend->>API Gateway: GET /products (Authorization: Bearer <JWT>)
-    deactivate App Frontend
+    activate Frontend App
+    Note over Frontend App: 1. Sidebar checks: hasPermission('read:product')? -> YES
+    Frontend App->>API Gateway: GET /products (Authorization: Bearer <JWT>)
+    deactivate Frontend App
 
-    API Gateway->>Service Protégé: FORWARD request
+    API Gateway->>Protected Service: FORWARD request
 
-    activate Service Protégé
-    Note over Service Protégé: 2. Le middleware vérifie la signature du JWT (optionnel mais bonne pratique).
-    Note over Service Protégé: 3. Bien que le frontend ait déjà vérifié, la route peut revérifier si nécessaire.
-    Service Protégé->>Service Protégé: Exécute la logique métier (ex: récupérer les produits)
-    Service Protégé-->>API Gateway: 200 OK (with product data)
-    API Gateway-->>App Frontend: 200 OK (with product data)
+    activate Protected Service
+    Note over Protected Service: 2. Middleware verifies JWT signature (optional but good practice).
+    Note over Protected Service: 3. Although frontend already checked, the route can re-verify if needed.
+    Protected Service->>Protected Service: Perform business logic (e.g., fetch products)
+    Protected Service-->>API Gateway: 200 OK (with product data)
+    API Gateway-->>Frontend App: 200 OK (with product data)
 ```
 
 ---
@@ -180,13 +180,13 @@ Ce diagramme montre le processus de décision sur le frontend pour l'affichage d
 
 ```mermaid
 graph TD
-    A[L'utilisateur tente d'accéder à une page ou de voir un composant] --> B{Est Authentifié ?<br/>Le token existe et est valide};
-    B -- Non --> C[Redirection vers la page de Connexion];
-    B -- Oui --> D{Permission Requise ?};
-    D -- Non --> F[Afficher le Contenu];
-    D -- Oui --> E{L'utilisateur a la permission requise ?};
-    E -- Non --> G[Masquer le Composant OU<br/>Redirection vers Tableau de bord/Erreur];
-    E -- Oui --> F;
+    A[User attempts to access a page or view a component] --> B{Is Authenticated?<br/>Token exists and is valid};
+    B -- No --> C[Redirect to Login Page];
+    B -- Yes --> D{Permission Required?};
+    D -- No --> F[Render Content];
+    D -- Yes --> E{User has required permission?};
+    E -- No --> G[Hide Component OR<br/>Redirect to Dashboard/Error];
+    E -- Yes --> F;
 ```
 
 Ce système complet garantit que l'accès des utilisateurs est contrôlé de manière sécurisée, efficace et cohérente, depuis la base de données jusqu'au dernier pixel affiché dans le navigateur de l'utilisateur.
