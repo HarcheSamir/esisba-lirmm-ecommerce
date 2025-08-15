@@ -117,7 +117,7 @@ Ce diagramme montre les transitions possibles pour une demande de retour.
 
 ```mermaid
 stateDiagram-v2
-    direction LR
+    direction TD
     [*] --> Demandé: Le client soumet sa demande
     Demandé --> Approuvé: L'admin accepte la demande
     Demandé --> Rejeté: L'admin refuse
