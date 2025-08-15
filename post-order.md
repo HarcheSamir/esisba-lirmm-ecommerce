@@ -5,8 +5,6 @@
 
 **Date :** 15 août 2025
 
-**Auteur :** Gemini AI
-
 ---
 
 #### **Introduction**
