@@ -181,12 +181,12 @@ This diagram shows the decision process on the frontend for rendering any protec
 
 ```mermaid
 graph TD
-    A[User attempts to access a page or view a component] --> B{Is Authenticated? (token exists and is valid)};
+    A[User attempts to access a page or view a component] --> B{Is Authenticated?<br/>Token exists and is valid};
     B -- No --> C[Redirect to Login Page];
     B -- Yes --> D{Permission Required?};
     D -- No --> F[Render Content];
-    D -- Yes --> E{User hasPermission(requiredPermission)?};
-    E -- No --> G[Hide Component OR Redirect to Dashboard/Error];
+    D -- Yes --> E{User has required permission?};
+    E -- No --> G[Hide Component OR<br/>Redirect to Dashboard/Error];
     E -- Yes --> F;
 ```
 
